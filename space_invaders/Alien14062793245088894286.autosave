@@ -1,0 +1,101 @@
+
+
+public class Alien {
+  
+  int posX = 0;
+  int posY = 0;
+
+  int alienWidth = 80;
+  int alienHeight = 80;
+  
+  boolean goDown = false;
+
+
+  int counter = 0;
+  
+  int tempY = 0;
+
+  PImage alien = loadImage("alien.gif");
+  
+  boolean firstTime = true;
+  boolean moveRight = true;
+  boolean moveLeft = false;
+
+
+  Alien () {
+
+
+
+  }
+
+
+  void move() {
+    
+    if (posX + alienWidth == width) {
+
+        goDown = true;
+        moveRight = false; 
+        firstTime = false;
+    }
+
+    if (posX == 0 && firstTime == false) {
+
+        goDown = true;
+        moveLeft = false; 
+    }
+
+    if (goDown) {
+
+        posY += 10;
+        counter++;
+    }
+
+    if (counter == 8) {
+
+        goDown = false;
+
+        if (posX + alienWidth == width) {
+
+            moveLeft = true;
+        }
+        if (posX == 0) {
+
+            moveRight = true;
+        }
+
+        counter = 0;
+    }
+
+    if (moveRight = true && goDown == false && moveLeft == false) {
+      
+        posX += 10;
+      
+    }
+
+    if (moveRight == false && moveLeft == true && goDown == false) {
+
+        posX -= 10;
+    }
+
+
+
+  }
+  
+  
+  void explode() {
+    
+    
+    
+    
+  }
+
+
+  void draw() {
+    
+    alien.resize(alienWidth, alienHeight);
+    image(alien, posX, posY);
+
+  }
+  
+  
+}
