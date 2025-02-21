@@ -4,6 +4,8 @@ public class Alien {
     int posY = 0;
     int baseY = 0;  // Maintain a base Y position
 
+    // test to see if this works
+
     float x = 0;
 
     // if you dont do this ur gay OW YEAH IM JAKEING IT.
