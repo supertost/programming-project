@@ -6,6 +6,7 @@ public class Alien {
 
     float x = 0;
 
+    // if you dont do this ur gay OW YEAH IM JAKEING IT.
     int alienWidth = 80;
     int alienHeight = 80;
 
