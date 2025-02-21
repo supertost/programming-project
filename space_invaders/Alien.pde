@@ -6,6 +6,8 @@ public class Alien {
 
     // test to see if this works
 
+    // Github'da gözükecek mi diye test
+
     float x = 0;
 
     // if you dont do this ur gay OW YEAH IM JAKEING IT.
