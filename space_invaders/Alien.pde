@@ -8,6 +8,8 @@ public class Alien {
 
     // Github'da gözükecek mi diye test
 
+    // Aziz çok gay
+
     float x = 0;
 
     // if you dont do this ur gay OW YEAH IM JAKEING IT.
