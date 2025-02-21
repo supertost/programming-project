@@ -14,7 +14,9 @@ After installing the Github desktop app, you will be prompted to login to your a
 
 After you clone the repository to your prefered location in your computer, you will be able to automatically open it in VS Code, but if you do not want to open it from VS Code you can just manually open the files from file explorer.
 
-When you make changes to the code on your computer, the github desktop app will show you the changes you make, when you're done with what you're doing, you can open the Github desktop app, press "Commit to main" in the lower left hand side of the window and then press "Pull to repository".
+When you make changes to the code on your computer, the github desktop app will show you the changes you make, when you're done with what you're doing, you can open the Github desktop app, press "Commit to main" in the lower left hand side of the window and then press "Push commits to the origin". Pressing this button will replace the file in the repository with the one you have edited.
+
+There will also be a short photo tutorial under the "Github Desktop Tutorial" folder.
 
 ### Besides the test folder and files, the project files along with the instructions for the actual project is located under the "Project Resources" folder. 
 
