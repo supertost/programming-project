@@ -1,4 +1,4 @@
-# programming-project
+# Programming Project - Week 6 and Beyond
 
 ## This is a test for the programming project GitHub repository.
 
