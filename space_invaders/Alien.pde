@@ -8,6 +8,8 @@ public class Alien {
 
     // Github'da gözükecek mi diye test
 
+    // Git test, Yusuf'un bilgisayarı intihar etti
+
     float x = 0;
 
     int alienWidth = 80;
