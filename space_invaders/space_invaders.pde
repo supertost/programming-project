@@ -3,7 +3,7 @@ import java.util.Random;
 Alien[] theAlien;
 
 
-    // Test to see if this comment will show up in the repository
+    // Test to see if this text will show up in the github repository
 
 void setup() {
     
