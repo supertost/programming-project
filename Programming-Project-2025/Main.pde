@@ -35,10 +35,17 @@ void setup() {
                                expDepTime, depTime, expArrTime, arrTime, cancelled, diverted, distance);
     fullFlights.add(flight);
   }
-  for(int i = 0; i <= fullFlights.size(); i++)
-  {
+
+  // showing that we are reading data
+  for(int i = 0; i < fullFlights.size(); i++) {
+    FullFlight flight = fullFlights.get(i);
+    println(flight.date);
     println(i);
   }
+ 
+
+ // ex of how to use sorted flight or searching.
+ println(getFlight(1, "New York, NY", false, 2475).date);
  
 
 
@@ -46,6 +53,22 @@ void setup() {
   // flights array is already populated
   barChart = new BarChart(fullFlights);
 }
+
+//Getting unique flight by sorting it. Needed data: flightNum, originCity, isCancelled, distanceTravelled
+ FullFlight getFlight(int flightNumber, String originCity, boolean cancelled, int distance) {
+      for(int i = 0; i < fullFlights.size(); i++) {
+        FullFlight flight = fullFlights.get(i);
+        if (flight.flightNumber == flightNumber 
+        && flight.originCity.equals(originCity) 
+        && flight.cancelled == cancelled
+        && flight.distance == distance) {
+          return flight;
+        } 
+
+      } 
+      
+      return null;
+  }
 
 void draw() {
   background(240);
