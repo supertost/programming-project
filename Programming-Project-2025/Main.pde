@@ -2,7 +2,7 @@
 
 // all flights are here. you can see what properties have one flight by going to flight class.
 // all flights_all.csv file flights are here.
-ArrayList<Flight> flights = new ArrayList<Flight>();
+ArrayList<Flight> fullFlights = new ArrayList<Flight>();
 
 void setup() {
   Table table = loadTable("flights_full.csv", "header");

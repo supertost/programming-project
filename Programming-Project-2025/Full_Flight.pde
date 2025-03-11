@@ -1,8 +1,8 @@
 
-class Flight {
+class FullFlight {
 
   
-  // these are the all properties that one flight has.
+  // these are the all properties that one full_flight has.
   String date;
   String carrier;
   int flightNumber;
@@ -23,7 +23,7 @@ class Flight {
   int distance;
   
   
-  // this is the constructor so we can store multiple flight objects. 
+  // this is the constructor so we can store multiple full_flight objects. 
   Flight(String date, String carrier, int flightNumber, String origin, String originCity, String originState, String originWac, String destination, String destCity, String destState, int destWac, int expDepTime, int depTime, int expArrTime, int arrTime, boolean cancelled,  boolean diverted, int distance) {
     
     this.date = date;
