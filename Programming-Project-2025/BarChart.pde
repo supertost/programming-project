@@ -4,18 +4,18 @@ class BarChart {
   int barWidth;
   int maxFlights;
 
-  BarChart(ArrayList<Flight> flights) {
+  BarChart(ArrayList<FullFlight> flights) {
     processData(flights);
     this.barWidth = width / stateNames.length;
     this.maxFlights = max(stateCounts);
   }
 
-  void processData(ArrayList<Flight> flights) {
+  void processData(ArrayList<FullFlight> flights) {
     ArrayList<String> tempStateNames = new ArrayList<String>();
     ArrayList<Integer> tempStateCounts = new ArrayList<Integer>();
 
     // Count flights per state
-    for (Flight flight : flights) {
+    for (FullFlight flight : flights) {
       String originState = flight.originState;
 
       int index = tempStateNames.indexOf(originState);
