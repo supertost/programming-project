@@ -57,4 +57,7 @@ class BarChart {
       text(stateCounts[i], i * barWidth + (barWidth / 2), height - barHeight - 55);
     }
   }
+  String[] getStateNames() {
+    return stateNames;
+  }
 }
