@@ -2,7 +2,7 @@
 
 // all flights are here. you can see what properties have one flight by going to flight class.
 // all flights_all.csv file flights are here.
-ArrayList<Flight> fullFlights = new ArrayList<Flight>();
+ArrayList<FullFlight> fullFlights = new ArrayList<FullFlight>();
 
 void setup() {
   Table table = loadTable("flights_full.csv", "header");
@@ -29,11 +29,14 @@ void setup() {
     int distance = row.getInt("DISTANCE");
 
     // Create and store the Flight object
-    Flight flight = new Flight(date, carrier, flightNumber, origin, originCity, originState, 
+    FullFlight flight = new FullFlight(date, carrier, flightNumber, origin, originCity, originState, 
                                originWac, destination, destCity, destState, destWac, 
                                expDepTime, depTime, expArrTime, arrTime, cancelled, diverted, distance);
-    flights.add(flight);
+    fullFlights.add(flight);
   }
-
+  for(int i = 0; i <= fullFlights.size(); i++)
+  {
+    println(i);
+  }
  
 }

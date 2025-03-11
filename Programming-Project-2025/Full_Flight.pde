@@ -24,7 +24,7 @@ class FullFlight {
   
   
   // this is the constructor so we can store multiple full_flight objects. 
-  Flight(String date, String carrier, int flightNumber, String origin, String originCity, String originState, String originWac, String destination, String destCity, String destState, int destWac, int expDepTime, int depTime, int expArrTime, int arrTime, boolean cancelled,  boolean diverted, int distance) {
+  FullFlight(String date, String carrier, int flightNumber, String origin, String originCity, String originState, String originWac, String destination, String destCity, String destState, int destWac, int expDepTime, int depTime, int expArrTime, int arrTime, boolean cancelled,  boolean diverted, int distance) {
     
     this.date = date;
     this.carrier = carrier;
