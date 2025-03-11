@@ -57,27 +57,27 @@ void draw() {
 void drawButtons() {
   // Button for bar chart
   fill(showBarChart ? color(0, 150, 200) : color(200));
-  rect(20, 20, 150, 40, 5);
+  rect(600, 20, 150, 40, 5);
   fill(0);
   textSize(16);
   textAlign(CENTER, CENTER);
-  text("Bar Chart", 95, 40);
+  text("Bar Chart", 675, 40);
 
   // Button for pie chart
   fill(!showBarChart ? color(0, 150, 200) : color(200));
-  rect(200, 20, 150, 40, 5);
+  rect(800, 20, 150, 40, 5);
   fill(0);
-  text("Pie Chart", 275, 40);
+  text("Pie Chart", 875, 40);
 }
 
 void mousePressed() {
   // Check if bar chart button is clicked
-  if (mouseX > 20 && mouseX < 170 && mouseY > 20 && mouseY < 60) {
+  if (mouseX > 600 && mouseX < 750 && mouseY > 20 && mouseY < 60) {
     showBarChart = true;
   }
 
   // Check if pie chart button is clicked
-  if (mouseX > 200 && mouseX < 350 && mouseY > 20 && mouseY < 60) {
+  if (mouseX > 800 && mouseX < 950 && mouseY > 20 && mouseY < 60) {
     showBarChart = false;
   }
 
