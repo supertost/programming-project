@@ -19,7 +19,7 @@ float menuItemWidth = 200;           // approximate clickable width
 float menuItemHeight = 40; 
 
 void setup() {
-  size(1000, 600);
+  size(1000, 935);
   
   // Loads the background image from the folder
   bg = loadImage("background.png"); 
