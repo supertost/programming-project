@@ -68,6 +68,11 @@ void setup() {
   // Get list of all states
   stateNames = barChart.getStateNames();
   selectedStates = new boolean[stateNames.length]; // Initialize selection array
+
+
+  // example interaction for searching for specific flight.
+  println(getFlight(1, "New York, NY", false, 2475).date);
+
 }
 
 void draw() {
