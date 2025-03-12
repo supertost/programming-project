@@ -1,17 +1,44 @@
 ArrayList<FullFlight> fullFlights;
 BarChart barChart;
 PieChart pieChart;
-boolean showBarChart = true; // Toggle between bar chart and pie chart
-boolean[] selectedStates; // Tracks which states are selected for the pie chart
-String[] stateNames; // List of all states
+
+// Toggle between bar chart and pie chart -- This part can be removed as a main menu is added
+boolean showBarChart = true; 
+boolean[] selectedStates; 
+String[] stateNames; 
+
+// Main Menu Variables
+boolean showMenu = true;             // true = display main menu, false = display charts
+PImage bg;                           // background image for the menu
+String[] menuItems = {"Pie Chart", "Bar Chart", "Heat Map", "Histogram"};
+float menuX, menuY;                  // top-left corner of menu items
+float menuItemSpacing = 60;          // vertical spacing between items
+float menuItemWidth = 200;           // approximate clickable width
+float menuItemHeight = 40; 
 
 void setup() {
   size(1000, 600);
+  
+  // Loads the background image from the folder
+  bg = loadImage("background.png"); 
+  
+  // Positions the menu on the right side
+  menuX = width - 300;  
+  menuY = 200; 
+
+  textAlign(LEFT, TOP);
+  noStroke();
+  
+  
+  
+  
   fullFlights = new ArrayList<FullFlight>();
 
   // Load data from CSV
   Table table = loadTable("flights_full.csv", "header");
+  
   for (TableRow row : table.rows()) {
+    
     FullFlight flight = new FullFlight(
       row.getString("FL_DATE"), row.getString("MKT_CARRIER"), row.getInt("MKT_CARRIER_FL_NUM"),
       row.getString("ORIGIN"), row.getString("ORIGIN_CITY_NAME"), row.getString("ORIGIN_STATE_ABR"),
@@ -20,13 +47,16 @@ void setup() {
       row.getInt("DEP_TIME"), row.getInt("CRS_ARR_TIME"), row.getInt("ARR_TIME"),
       row.getInt("CANCELLED") == 1, row.getInt("DIVERTED") == 1, row.getInt("DISTANCE")
     );
+    
     fullFlights.add(flight);
   }
 
 
 // showing that we are reading data
   for(int i = 0; i < fullFlights.size(); i++) {
+    
     FullFlight flight = fullFlights.get(i);
+    
     println(flight.date);
     println(i);
   }
@@ -41,18 +71,154 @@ void setup() {
 }
 
 void draw() {
-  background(240);
+  
+  if (showMenu) {
+    
+    background(0);
+    
+    // Draw the background image to fill the window
+    image(bg, 0, 0, width, height);
 
-  // Draw buttons
-  drawButtons();
+    // Big title Text
+    fill(255);
+    textSize(48);
+    text("What do you want to do today?", 50, 50);
 
-  // Display the selected chart
-  if (showBarChart) {
-    barChart.display();
-  } else {
-    pieChart.display(selectedStates);
+    // Subtitle Text
+    textSize(24);
+    text("Please select your desired action\nfrom the menu on the right", 50, 120);
+
+    // Draw the menu items on the righthand side
+    textSize(32);
+    
+    for (int i = 0; i < menuItems.length; i++) {
+      
+      float itemY = menuY + i * menuItemSpacing;
+      
+      // Highlighting if mouse is over this item
+      if (isMouseOverItem(i)) {
+        
+        fill(255, 200);
+        rect(menuX - 10, itemY - 5, menuItemWidth, menuItemHeight);
+        fill(0);
+      } 
+      
+      else {
+        
+        fill(255);
+      }
+      
+      text(menuItems[i], menuX, itemY);
+    }
+
+  } 
+  
+  else {
+    
+  // THIS PART IS FROM THE PREVIOUS BAR CHART PIE CHART SELECTION MENU - THIS PART CAN BE REMOVED LATER (Emir D.)
+    
+    background(240);
+
+    // Draw the chart toggle buttons (Bar / Pie)
+    drawButtons();
+
+    // Display whichever chart is selected
+    if (showBarChart) {
+      barChart.display();
+    } else {
+      pieChart.display(selectedStates);
+    }
   }
 }
+
+
+void mousePressed() {
+  
+  if (showMenu) {
+    
+    // Check if a menu item is clicked
+    for (int i = 0; i < menuItems.length; i++) {
+      
+      if (isMouseOverItem(i)) {
+        
+        String choice = menuItems[i];
+        println(choice + " clicked!");
+
+        // Depending on the choice, sets up the screen
+        if (choice.equals("Bar Chart")) {
+          
+          showBarChart = true;
+          showMenu = false; 
+        } 
+        
+        else if (choice.equals("Pie Chart")) {
+          
+          showBarChart = false;
+          showMenu = false;
+        } 
+        
+        else if (choice.equals("Heat Map")) {
+
+          // This part is empty for now as we don't have a heatmap
+          
+          showMenu = false; 
+          println("Heat Map not yet implemented");
+        } 
+        
+        else if (choice.equals("Histogram")) {
+          
+          
+          // This part is also empty for now as we don't have an histogram either
+          
+          showMenu = false; 
+          println("Histogram not yet implemented");
+        }
+      }
+    }
+  } 
+  
+  else {
+    
+// THIS PART IS FROM THE OLD UNREMOVED MENU -- CAN BE REMOVED LATER ON
+
+    if (mouseX > 600 && mouseX < 750 && mouseY > 20 && mouseY < 60) {
+      
+      showBarChart = true;
+    }
+
+    // Check if pie chart button is clicked
+    if (mouseX > 800 && mouseX < 950 && mouseY > 20 && mouseY < 60) {
+      
+      showBarChart = false;
+    }
+
+    // Allow state selection for pie chart
+    if (!showBarChart) {
+      
+      for (int i = 0; i < stateNames.length; i++) {
+        
+        float y = 100 + i * 20;
+        
+        if (mouseX > 20 && mouseX < 40 && mouseY > y && mouseY < y + 20) {
+          
+          selectedStates[i] = !selectedStates[i]; // Toggle selection
+        }
+      }
+    }
+  }
+}
+
+
+boolean isMouseOverItem(int index) {
+  
+  float itemY = menuY + index * menuItemSpacing;
+  
+  return (mouseX >= menuX - 10 && mouseX <= menuX - 10 + menuItemWidth && mouseY >= itemY - 5 && mouseY <= itemY - 5 + menuItemHeight);
+}
+
+
+
+// THIS PART IS ALSO FOR THE OLD MENU THAT HAS NOT BEEN REMOVED YET
 
 void drawButtons() {
   // Button for bar chart
@@ -70,35 +236,16 @@ void drawButtons() {
   text("Pie Chart", 875, 40);
 }
 
-void mousePressed() {
-  // Check if bar chart button is clicked
-  if (mouseX > 600 && mouseX < 750 && mouseY > 20 && mouseY < 60) {
-    showBarChart = true;
-  }
-
-  // Check if pie chart button is clicked
-  if (mouseX > 800 && mouseX < 950 && mouseY > 20 && mouseY < 60) {
-    showBarChart = false;
-  }
-
-  // Allow state selection for pie chart
-  if (!showBarChart) {
-    for (int i = 0; i < stateNames.length; i++) {
-      float y = 100 + i * 20;
-      if (mouseX > 20 && mouseX < 40 && mouseY > y && mouseY < y + 20) {
-        selectedStates[i] = !selectedStates[i]; // Toggle selection
-      }
-    }
-  }
-}
-
 // Search for a flight by flight number, origin city, cancellation status, and distance
 FullFlight getFlight(int flightNumber, String originCity, boolean cancelled, int distance) {
+  
   for (FullFlight flight : fullFlights) {
+    
     if (flight.flightNumber == flightNumber 
         && flight.originCity.equals(originCity) 
         && flight.cancelled == cancelled
         && flight.distance == distance) {
+          
       return flight;
     }
   }
