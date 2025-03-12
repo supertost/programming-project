@@ -1,3 +1,5 @@
+PFont defaultFont, boldFont;
+
 ArrayList<FullFlight> fullFlights;
 BarChart barChart;
 PieChart pieChart;
@@ -29,13 +31,15 @@ void setup() {
   textAlign(LEFT, TOP);
   noStroke();
   
+  defaultFont = createFont("SansSerif", 24, true);
+  boldFont = createFont("SansSerif.bold", 48, true);
   
   
   
   fullFlights = new ArrayList<FullFlight>();
 
   // Load data from CSV
-  Table table = loadTable("flights_full.csv", "header");
+  Table table = loadTable("flights2k.csv", "header");
   
   for (TableRow row : table.rows()) {
     
@@ -87,11 +91,13 @@ void draw() {
     // Big title Text
     fill(255);
     textSize(48);
-    text("What do you want to do today?", 50, 50);
+    textFont(boldFont);
+    text("What do you want\nto do today?", 50, height/2 - 90);
 
     // Subtitle Text
     textSize(24);
-    text("Please select your desired action\nfrom the menu on the right", 50, 120);
+    textFont(defaultFont);
+    text("Please select your desired action\nfrom the menu on the right", 50, height/2 + 40);
 
     // Draw the menu items on the righthand side
     textSize(32);
@@ -104,7 +110,7 @@ void draw() {
       if (isMouseOverItem(i)) {
         
         fill(255, 200);
-        rect(menuX - 10, itemY - 5, menuItemWidth, menuItemHeight);
+        rect(menuX - 20, itemY - 10, menuItemWidth, menuItemHeight+5, 10);
         fill(0);
       } 
       
