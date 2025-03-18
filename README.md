@@ -3,7 +3,7 @@
 ## This is the Programming Project GitHub repository for Group 5.
 
 ### Group Work Allocation:
-| FrontEnd | BackEnd    | BarCharts |
+| FrontEnd | BackEnd    |  Charts    |
 |  :---:   |   :----:   |   :---:   |
 | Emir     | Aziz       | Ioannis   |
 | Parsia   | Dev        | Andreas   |
