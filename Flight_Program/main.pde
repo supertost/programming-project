@@ -19,7 +19,7 @@
 */
 
 
-
+// window dimensions
 PImage bg;
 int screenW = 1200;
 int screenH = 800;
