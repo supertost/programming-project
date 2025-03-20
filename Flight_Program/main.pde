@@ -18,6 +18,8 @@
 
 */
 
+
+
 PImage bg;
 int screenW = 1200;
 int screenH = 800;
@@ -66,6 +68,9 @@ int searchDropdownItemHeight = 25; // height for each dropdown item
 PFont mono;
 PFont mono2;
 
+// All flight objects stored here.
+ArrayList<Flight> flights;
+
 void setup() {
   
   size(1200, 800);
@@ -85,6 +90,30 @@ void setup() {
   //Second Font that's for the title
   mono2 = createFont("Fonts/Helvetica-Bold.ttf", 30);
   //textFont(mono2);
+  
+  
+  flights = new ArrayList<Flight>();
+
+  // Load data from CSV
+  Table table = loadTable("flights2k.csv", "header");
+  
+  // reading flights to add into flights ArrayList.
+  for (TableRow row : table.rows()) {
+    
+    Flight flight = new Flight(
+      row.getString("FL_DATE"), row.getString("MKT_CARRIER"), row.getInt("MKT_CARRIER_FL_NUM"),
+      row.getString("ORIGIN"), row.getString("ORIGIN_CITY_NAME"), row.getString("ORIGIN_STATE_ABR"),
+      row.getString("ORIGIN_WAC"), row.getString("DEST"), row.getString("DEST_CITY_NAME"),
+      row.getString("DEST_STATE_ABR"), row.getInt("DEST_WAC"), row.getInt("CRS_DEP_TIME"),
+      row.getInt("DEP_TIME"), row.getInt("CRS_ARR_TIME"), row.getInt("ARR_TIME"),
+      row.getInt("CANCELLED") == 1, row.getInt("DIVERTED") == 1, row.getInt("DISTANCE")
+    );
+    
+    flights.add(flight);
+  }
+  
+  
+  
 }
 
 
