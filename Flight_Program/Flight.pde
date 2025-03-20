@@ -3,15 +3,16 @@ class Flight {
 
   
   // these are the all properties that one full_flight has.
-  String date;
+  
+  String date;        // startDate - endDate : int   can be searched in the form   **01/date/2022 00:00**
   String carrier;
   int flightNumber;
   String origin;
-  String originCity;
+  String originCity;  // selectionDorO = Origin"
   String originState;
   String originWac;
   String destination;
-  String destCity;
+  String destCity;    // selectionDorO = "Destination"
   String destState;
   int destWac;
   int expDepTime;  // expected departure time
