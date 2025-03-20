@@ -500,6 +500,12 @@ void mousePressed() {
     clickHandled = true;
   }
   
+  if (isMouseOver(toggleX+80, toggleY, 20, 25)) {
+    
+    isLate = !isLate;
+    clickHandled = true;
+  }
+  
   // Check Search Bar click
   if (isMouseOver(searchX, searchY, searchW, searchH)) {
     
