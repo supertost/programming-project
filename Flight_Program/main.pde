@@ -32,11 +32,11 @@ int colourValueButtonOriginG = 255;
 int colourValueButtonOriginB = 255;
 
 // Varible that holds which button is pressed between the destination or the origin
-String selectionDorO = null;
+String selectionDorO = "Destination";
 
 // RGB colour variables for the destiantion button
 int colourValueButtonDestR = 255;
-int colourValueButtonDestG = 255;
+int colourValueButtonDestG = 100;
 int colourValueButtonDestB = 255;
 
 int opacityValueButtonOrigin = 220;
@@ -168,8 +168,8 @@ void draw() {
 void drawHeader() {
   
   noStroke();
-  fill(100, 100, 100, 0); // Semi-transparent header
-  rect(0, 0, screenW, headerHeight);
+  fill(100, 100, 255, 0); // Semi-transparent header
+  rect(0, 0, screenW, headerHeight+20);
   
   // Header title
   fill(255);
@@ -450,7 +450,7 @@ void mousePressed() {
     selectionDorO = "Destination";
     
     // Changes the destination button colour to make it selected
-    colourValueButtonDestR = 100;
+    colourValueButtonDestR = 255;
     colourValueButtonDestG = 100;
     colourValueButtonDestB = 255;
     
@@ -479,7 +479,7 @@ void mousePressed() {
     selectionDorO = "Origin";
     
     // Changes the origin button colour to make it selected
-    colourValueButtonOriginR = 100;
+    colourValueButtonOriginR = 255;
     colourValueButtonOriginG = 100;
     colourValueButtonOriginB = 255;
     
