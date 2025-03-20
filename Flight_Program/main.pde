@@ -590,10 +590,47 @@ void mousePressed() {
 
 
 
-boolean checkIsLate(String expected, String real) {
-  
-  
-  
-  
-  return true;
+boolean checkIsLate(String expectedTime, String realTime) {
+
+  // Fixing the format: ensuring both time strings are 4 characters long
+  while (expectedTime.length() < 4) {
+    expectedTime = "0" + expectedTime;
+  }
+
+  while (realTime.length() < 4) {
+    realTime = "0" + realTime;
+  }
+
+  // Extract hours and minutes correctly
+  int expectedHour = Integer.parseInt(expectedTime.substring(0, 2));
+  int expectedMinute = Integer.parseInt(expectedTime.substring(2, 4));
+  int realHour = Integer.parseInt(realTime.substring(0, 2));
+  int realMinute = Integer.parseInt(realTime.substring(2, 4));
+
+  // Convert to total minutes for easy comparison
+  int expectedTotalMinutes = expectedHour * 60 + expectedMinute;
+  int realTotalMinutes = realHour * 60 + realMinute;
+
+  // Return true if realTime is later than expectedTime
+  return realTotalMinutes > expectedTotalMinutes;
+
 }
+
+
+// array[0] = startDate, array[1] = endDate
+String[] getRangeOfDates(int startDate, int endDate) {
+
+  String[] array = new String[2];
+
+  String start = "01/" + startDate + "/2022 " + "00:00";
+  String end = "01/" + endDate + "/2022 " + "00:00";
+
+  array[0] = start;
+  array[1] = end;
+  
+  return array;
+
+}
+
+
+

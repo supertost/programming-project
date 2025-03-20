@@ -15,9 +15,9 @@ class Flight {
   String destCity;    // selectionDorO = "Destination"
   String destState;
   int destWac;
-  int expDepTime;  // expected departure time
+  int expDepTime;  // expected departure time    IF "Origin" USE THIS
   int depTime;
-  int expArrTime;  // expected arrive time
+  int expArrTime;  // expected arrive time       IF "Destination" USE THIS
   int arrTime;
   boolean cancelled; 
   boolean diverted;
