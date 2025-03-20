@@ -114,6 +114,8 @@ void setup() {
   
   
   
+  
+  
 }
 
 
@@ -586,6 +588,22 @@ void mousePressed() {
     dateRangeActive = false;
     searchActive = false;
   }
+  
+  if (startDate != -1 && endDate != -1) {
+    
+
+    // Searched flights
+    ArrayList<Flight> wantedFlights = limitedFlights(startDate, endDate, flights, isLate);
+
+    
+
+    for (Flight flight : wantedFlights) {
+        println("Flight date: " + flight.date);
+    }
+}
+
+  
+  
 }
 
 
@@ -619,18 +637,63 @@ boolean checkIsLate(String expectedTime, String realTime) {
 
 // array[0] = startDate, array[1] = endDate
 String[] getRangeOfDates(int startDate, int endDate) {
+    String[] array = new String[2];
 
-  String[] array = new String[2];
+    String start = String.format("01/%02d/2022 00:00", startDate);
+    String end = String.format("01/%02d/2022 00:00", endDate);
 
-  String start = "01/" + startDate + "/2022 " + "00:00";
-  String end = "01/" + endDate + "/2022 " + "00:00";
+    array[0] = start;
+    array[1] = end;
 
-  array[0] = start;
-  array[1] = end;
-  
-  return array;
-
+    return array;
 }
 
 
-
+ArrayList<Flight> limitedFlights(int startDateEntered, int endDateEntered,  ArrayList<Flight> flights, boolean isLate) {
+  
+  ArrayList<Flight> sortedFlights = new ArrayList<>();
+  
+  String[] dates = getRangeOfDates(startDateEntered, endDateEntered);
+  String startDate = dates[0];
+  String endDate = dates[1];
+  
+  int start = Integer.parseInt(startDate.substring(3,5));
+  int end = Integer.parseInt(endDate.substring(3,5));
+  
+  
+  
+  
+  for (int i = 0; i < flights.size(); i++) {
+    
+    Flight flight = flights.get(i);
+    
+    String date = flight.date;
+    
+    int day = Integer.parseInt(date.substring(3,5));
+    
+    boolean isLateFlight = false;
+    
+    
+    if (selectionDorO.equals("Origin")) {
+      isLateFlight = checkIsLate(String.valueOf(flight.expDepTime), String.valueOf(flight.depTime));
+    } else {
+      isLateFlight = checkIsLate(String.valueOf(flight.expArrTime), String.valueOf(flight.arrTime));
+    }
+    
+    
+    if (isLateFlight == isLate && day >= start && day <= end) {
+      sortedFlights.add(flights.get(i));
+    }
+    
+    
+    
+    
+  }
+  
+  
+  
+  
+  return sortedFlights;
+  
+  
+}  
