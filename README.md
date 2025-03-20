@@ -1,6 +1,13 @@
 # Programming Project - Week 6 and Beyond
 
-## This is a test for the programming project GitHub repository.
+## This is the Programming Project GitHub repository for Group 5.
+
+### Group Work Allocation:
+| FrontEnd | BackEnd    |  Charts    |
+|  :---:   |   :----:   |   :---:   |
+| Emir     | Aziz       | Ioannis   |
+| Parsia   | Dev        | Andreas   |
+
 
 Files related to the project are located under the "Programming-Project-2025" folder, other related csv files are located under the "Project Resources" folder, 
 
