@@ -671,19 +671,9 @@ void mousePressed() {
     searchActive = false;
   }
   
-  if (startDate != -1 && endDate != -1 && startDate <= endDate) {
-    
-    ArrayList<Flight> wantedFlights = limitedFlights(startDate, endDate, flights, isLate);
-    for (Flight flight : wantedFlights) {
-      //println("Flight date: " + flight.date);
-    }
-  }
-  else if (startDate != -1 && endDate != -1 && startDate > endDate){
-    ArrayList<Flight> wantedFlights = limitedFlights(endDate, startDate, flights, isLate);
-    for (Flight flight : wantedFlights) {
-      //println("Flight date: " + flight.date);
-    }
-  }
+  // going to implement when search button added by front end.
+  //ArrayList<Flight> filteredFlightsNotDest = limitedFlights(startDate, endDate, flights, isLate);
+  
 }
 
 
