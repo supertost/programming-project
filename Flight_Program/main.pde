@@ -248,8 +248,16 @@ void drawDateButton(int x, int y, int w, int h) {
     text("Pick Date Range", x + w/2, y + h/2);
   } else if (startDate != -1 && endDate == -1) {
     text("Start: " + startDate + " (select End Date)", x + w/2, y + h/2);
-  } else {
-    text("Start: " + startDate + "   End: " + endDate, x + w/2, y + h/2);
+    
+  }
+  
+  else{
+    if (startDate <= endDate){
+      text("Start: " + startDate + "   End: " + endDate, x + w/2, y + h/2);
+    }
+    else {
+      text("Start: " + endDate + "   End: " + startDate, x + w/2, y + h/2);
+    }
   }
 }
 
@@ -654,8 +662,15 @@ void mousePressed() {
     searchActive = false;
   }
   
-  if (startDate != -1 && endDate != -1) {
+  if (startDate != -1 && endDate != -1 && startDate <= endDate) {
+    
     ArrayList<Flight> wantedFlights = limitedFlights(startDate, endDate, flights, isLate);
+    for (Flight flight : wantedFlights) {
+      //println("Flight date: " + flight.date);
+    }
+  }
+  else if (startDate != -1 && endDate != -1 && startDate > endDate){
+    ArrayList<Flight> wantedFlights = limitedFlights(endDate, startDate, flights, isLate);
     for (Flight flight : wantedFlights) {
       //println("Flight date: " + flight.date);
     }
@@ -684,20 +699,49 @@ boolean checkIsLate(String expectedTime, String realTime) {
 
 String[] getRangeOfDates(int startDate, int endDate) {
   String[] array = new String[2];
-  String start = String.format("01/%02d/2022 00:00", startDate);
-  String end = String.format("01/%02d/2022 00:00", endDate);
-  array[0] = start;
-  array[1] = end;
+  String start;
+  String end;
+  if(startDate <= endDate){
+    start = String.format("01/%02d/2022 00:00", startDate);
+    end = String.format("01/%02d/2022 00:00", endDate);
+    array[0] = start;
+    array[1] = end;
+  }
+  else{
+    start = String.format("01/%02d/2022 00:00", endDate);
+    end = String.format("01/%02d/2022 00:00", startDate);
+    array[0] = end;
+    array[1] = start;
+  }
   return array;
 }
 
-ArrayList<Flight> limitedFlights(int startDateEntered, int endDateEntered, ArrayList<Flight> flights, boolean isLate) {
+  ArrayList<Flight> limitedFlights(int startDateEntered, int endDateEntered, ArrayList<Flight> flights, boolean isLate) {
   ArrayList<Flight> sortedFlights = new ArrayList<Flight>();
   
-  String[] dates = getRangeOfDates(startDateEntered, endDateEntered);
-  String startDateStr = dates[0];
-  String endDateStr = dates[1];
+  String[] dates;
+  String startDateStr;
+  String endDateStr;
   
+  if(startDateEntered <= endDateEntered){
+    dates = getRangeOfDates(startDateEntered, endDateEntered);
+    
+  }
+  else{
+    dates = getRangeOfDates(endDateEntered, startDateEntered);
+
+  }
+  
+  
+  if (startDateEntered >= endDateEntered){
+    startDateStr = dates[1];
+    endDateStr = dates[0];
+  }
+  else{
+    startDateStr = dates[0];
+    endDateStr = dates[1];
+  }
+
   int start = Integer.parseInt(startDateStr.substring(3,5));
   int end = Integer.parseInt(endDateStr.substring(3,5));
   
