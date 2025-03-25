@@ -11,7 +11,7 @@
        
        Lastly for the Search Bar, there is the "searchText" variable. After the user selects a state (using its abbreviation) and then an airport, the search bar will show the state and the airport chosen.
        
-       selected airport in variable selectedAirport and state in selectedState
+       state is saved in selectedState, and airport in selectedAirport
        
        Sincerely
        - Emir Dilekci
@@ -125,7 +125,7 @@ void setup() {
   flights = new ArrayList<Flight>();
 
   // Load data from CSV
-  Table table = loadTable("flights_full.csv", "header");
+  Table table = loadTable("flights2k.csv", "header");
   
   // Reading flights to add into flights ArrayList.
   for (TableRow row : table.rows()) {
@@ -542,8 +542,6 @@ void mousePressed() {
       selectingStart = true;
       startDate = -1;
       endDate = -1;
-      showStatesPopup = false;
-      showAirportsPopup = false;
     }
     clickHandled = true;
   }
@@ -657,7 +655,7 @@ void mousePressed() {
   if (startDate != -1 && endDate != -1) {
     ArrayList<Flight> wantedFlights = limitedFlights(startDate, endDate, flights, isLate);
     for (Flight flight : wantedFlights) {
-      //println("Flight date: " + flight.date);
+      println("Flight date: " + flight.date);
     }
   }
 }
