@@ -376,12 +376,12 @@ void drawCalendar(int x, int y) {
 // ------------------------
 void drawStatesPopup() {
   // Draw a white rectangle (popup) with a border.
-  stroke(0);
-  fill(255);
+  noStroke();
+  fill(255, 240);
   rect(popupX, popupY, popupW, popupH, 10);
   
   // Draw a "Close" button in the top-right corner.
-  fill(200);
+  fill(175, 200);
   rect(popupX + popupW - 25, popupY + 5, 20, 20, 5);
   fill(0);
   textSize(14);
@@ -430,12 +430,12 @@ void drawStatesPopup() {
 // ------------------------
 void drawAirportsPopup() {
   // Draw a white rectangle (popup) with a border.
-  stroke(0);
-  fill(255);
+  noStroke();
+  fill(255, 240);
   rect(airportPopupX, airportPopupY, airportPopupW, airportPopupH, 10);
   
   // Draw a "Close" button in the top-right corner.
-  fill(200);
+  fill(175, 100);
   rect(airportPopupX + airportPopupW - 25, airportPopupY + 5, 20, 20, 5);
   fill(0);
   textSize(14);
@@ -469,7 +469,6 @@ void drawAirportsPopup() {
     if (airportsToShow.get(i).equals(selectedAirport)) {
       noFill();
       stroke(0, 0, 255);
-      strokeWeight(2);
       float tw = textWidth(airportsToShow.get(i));
       float th = textAscent() + textDescent();
       rect(x - 2, y - th/2 - 2, tw + 4, th + 4);
@@ -574,6 +573,9 @@ void mousePressed() {
     showStatesPopup = true;
     showAirportsPopup = false;
     clickHandled = true;
+    
+    dateRangeActive = false;
+    selectingStart = false;
   }
   
   // Check Origin button.
@@ -592,6 +594,9 @@ void mousePressed() {
     showStatesPopup = true;
     showAirportsPopup = false;
     clickHandled = true;
+    
+        dateRangeActive = false;
+    selectingStart = false;
   }
   
   // Check Toggle.
@@ -605,12 +610,14 @@ void mousePressed() {
   }
   
   // Check Search Bar click.
+  /*
   if (isMouseOver(searchX, searchY, searchW, searchH)) {
     searchActive = !searchActive;
     clickHandled = true;
-  }
+  }*/
   
   // Check Search Dropdown click (if active).
+  /*
   if (searchActive) {
     int dropdownX = searchX;
     int dropdownY = searchY + searchH;
@@ -625,7 +632,7 @@ void mousePressed() {
       }
       clickHandled = true;
     }
-  }
+  }*/
   
   // Check Calendar area click (if active).
   if (dateRangeActive) {
