@@ -123,7 +123,7 @@ void setup() {
   flights = new ArrayList<Flight>();
 
   // Load data from CSV
-  Table table = loadTable("flights2k.csv", "header");
+  Table table = loadTable("flights_full.csv", "header");
   
   // Reading flights to add into flights ArrayList.
   for (TableRow row : table.rows()) {
@@ -540,6 +540,8 @@ void mousePressed() {
       selectingStart = true;
       startDate = -1;
       endDate = -1;
+      showStatesPopup = false;
+      showAirportsPopup = false;
     }
     clickHandled = true;
   }
@@ -653,7 +655,7 @@ void mousePressed() {
   if (startDate != -1 && endDate != -1) {
     ArrayList<Flight> wantedFlights = limitedFlights(startDate, endDate, flights, isLate);
     for (Flight flight : wantedFlights) {
-      println("Flight date: " + flight.date);
+      //println("Flight date: " + flight.date);
     }
   }
 }
