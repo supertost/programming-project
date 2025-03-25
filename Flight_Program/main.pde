@@ -345,6 +345,8 @@ void drawCalendar(int x, int y) {
         fill(0, 100, 255);
       } else if (startDate != -1 && endDate != -1 && day > startDate && day < endDate) {
         fill(200, 200, 255);
+      } else if (startDate != -1 && endDate != -1 && day < startDate && day > endDate) {
+        fill(200, 200, 255);
       } else {
         fill(255);
       }
