@@ -34,11 +34,11 @@ int colourValueButtonOriginG = 255;
 int colourValueButtonOriginB = 255;
 
 // Variable that holds which button is pressed between Destination or Origin
-String selectionDorO = "Destination";
+String selectionDorO = "";
 
 // RGB colour variables for the Destination button
 int colourValueButtonDestR = 255;
-int colourValueButtonDestG = 100;
+int colourValueButtonDestG = 255;
 int colourValueButtonDestB = 255;
 
 int opacityValueButtonOrigin = 220;
