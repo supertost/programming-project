@@ -128,6 +128,8 @@ void setup() {
   textSize(16);
   smooth();
   
+  windowTitle("CloudCruiser");
+  
   // Loads the background image
   bg = loadImage("background.png");
   
@@ -254,7 +256,7 @@ void drawHeader() {
   textAlign(LEFT, CENTER);
   textFont(mono2);
   textSize(45);
-  text("Group 5", 20, HEADER_HEIGHT/2 - 20);
+  text("CloudCruiser", 20, HEADER_HEIGHT/2 - 20);
   textFont(mono);
   textSize(16);
   
