@@ -22,11 +22,11 @@
 // Global Variables
 // ------------------------
 
-// window dimensions
+// constant window dimensions
 PImage bg;
-int screenW = 1200;
-int screenH = 800;
-int headerHeight = 150;
+final int SCREEN_WIDTH = 1200;
+final int SCREEN_HEIGHT = 800;
+final int HEADER_HEIGHT = 150;
 
 // Global screen indicator: 0 = main UI, 1 = bar chart screen.
 int currentScreen = 0;
@@ -173,7 +173,7 @@ void draw() {
     // Main UI screen.
     if (bg != null) {
       
-      image(bg, 0, 0, screenW, screenH);
+      image(bg, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     } 
     else {
       
@@ -198,7 +198,7 @@ void draw() {
     // Draw calendar if active
     if (dateRangeActive) {
       
-      drawCalendar(screenW/2 - 110, screenH/2 - 120);
+      drawCalendar(SCREEN_WIDTH/2 - 110, SCREEN_HEIGHT/2 - 120);
     }
     
   } 
@@ -230,7 +230,7 @@ void draw() {
     
     title += selectedState + ", " + selectedAirport + ": (" + startDate + "/1/2022 - "+ endDate + "/1/2022)"  ;
     textAlign(CENTER, TOP);
-    text(title, screenW/2, 120);
+    text(title, SCREEN_WIDTH/2, 120);
     drawBackButton(backButtonX, backButtonY, backButtonW, backButtonH);
     
     // Display the bar chart
@@ -247,14 +247,14 @@ void drawHeader() {
 
   noStroke();
   fill(100, 100, 255, 0); // Semi-transparent header
-  rect(0, 0, screenW, headerHeight + 20);
+  rect(0, 0, SCREEN_WIDTH, HEADER_HEIGHT + 20);
   
   // Header title
   fill(255);
   textAlign(LEFT, CENTER);
   textFont(mono2);
   textSize(45);
-  text("Group 5", 20, headerHeight/2 - 20);
+  text("Group 5", 20, HEADER_HEIGHT/2 - 20);
   textFont(mono);
   textSize(16);
   
@@ -811,7 +811,6 @@ void mousePressed() {
     ArrayList<Flight> filteredFlightsDest = destFiltering(filteredFlightsNotDest, selectionDorO, selectedAirport, selectedState);
 
 
-
     // Create a new BarChart object (the constructor will filter further based on the selected airport).
     barChart = new BarChart(filteredFlights);
 
@@ -830,7 +829,7 @@ void mousePressed() {
   // Check Calendar area click (if active).
   if (dateRangeActive) {
 
-    int calX = screenW/2 - 110 - 115, calY = screenH/2 - 120 - 120;
+    int calX = SCREEN_WIDTH/2 - 110 - 115, calY = SCREEN_HEIGHT/2 - 120 - 120;
 
     if (isMouseOver(calX, calY, 220, 240)) {
 
