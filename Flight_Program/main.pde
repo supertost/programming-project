@@ -28,6 +28,9 @@ int screenW = 1200;
 int screenH = 800;
 int headerHeight = 150;
 
+// Global screen indicator: 0 = main UI, 1 = bar chart screen.
+int currentScreen = 0;
+
 // RGB Colour Variable For The ORIGIN button
 int colourValueButtonOriginR = 255;
 int colourValueButtonOriginG = 255;
@@ -104,11 +107,10 @@ int airportPopupW = 300;
 int airportPopupH = 400;
 
 // ------------------------
-// Flight Class
+// Global Variables for Bar Chart
 // ------------------------
-// (Flight class is defined in its own file)
+BarChart barChart;
 
-// ------------------------
 // setup() Function
 // ------------------------
 void setup() {
@@ -151,34 +153,58 @@ void setup() {
 // draw() Function
 // ------------------------
 void draw() {
-  // Draw background image or fallback color
-  if (bg != null) {
-    image(bg, 0, 0, screenW, screenH);
-  } else {
-    background(100);
-  }
-  
-  // Draw header with semi-transparent background
-  drawHeader();
-  
-  // Draw states popup if active
-  if (showStatesPopup) {
-    drawStatesPopup();
-  }
-  
-  // Draw airports popup if active
-  if (showAirportsPopup) {
-    drawAirportsPopup();
-  }
-  
-  // Draw calendar if active
-  if (dateRangeActive) {
-    drawCalendar(screenW/2 - 110, screenH/2 - 120);
-  }
-  
-  // Draw search dropdown if active
-  if (searchActive) {
-    drawSearchDropdown();
+  if (currentScreen == 0) {
+    // Main UI screen.
+    if (bg != null) {
+      image(bg, 0, 0, screenW, screenH);
+    } else {
+      background(100);
+    }
+    
+    // Draw header with semi-transparent background
+    drawHeader();
+    
+    // Draw states popup if active
+    if (showStatesPopup) {
+      drawStatesPopup();
+    }
+    
+    // Draw airports popup if active
+    if (showAirportsPopup) {
+      drawAirportsPopup();
+    }
+    
+    // Draw calendar if active
+    if (dateRangeActive) {
+      drawCalendar(screenW/2 - 110, screenH/2 - 120);
+    }
+    
+    // Draw search dropdown if active
+    if (searchActive) {
+      drawSearchDropdown();
+    }
+    
+  } else if (currentScreen == 1) {
+    // Bar chart screen.
+    background(240);
+    // Display the title
+    fill(0);
+    textFont(mono2);
+    textSize(32);
+    String title = "";
+    if (selectionDorO.equals("Destination")) {
+      title = isLate ? "Late Flights to " : "On Time Flights to ";
+    } else if (selectionDorO.equals("Origin")) {
+      title = isLate ? "Late Flights from " : "On Time Flights from ";
+    }
+    title += selectedState + ", " + selectedAirport;
+    textAlign(CENTER, TOP);
+    text(title, screenW/2, 120);
+    
+    // Display the bar chart
+    if (barChart != null) {
+      barChart.display();
+    }
   }
 }
 
@@ -254,9 +280,7 @@ void drawDateButton(int x, int y, int w, int h) {
     text("Pick Date Range", x + w/2, y + h/2);
   } else if (startDate != -1 && endDate == -1) {
     text("Start: " + startDate + " (select End Date)", x + w/2, y + h/2);
-    
   }
-  
   else{
     if (startDate <= endDate){
       text("Start: " + startDate + "   End: " + endDate, x + w/2, y + h/2);
@@ -630,34 +654,14 @@ void mousePressed() {
   // Check Search Button click.
   if (isMouseOver(searchButtonX, searchButtonY, searchButtonW, searchButtonH)) {
     println("Search button clicked");
-    // Place search functionality here.
+    // Filter flights based on the date range and late condition.
+    ArrayList<Flight> filteredFlights = limitedFlights(startDate, endDate, flights, isLate);
+    // Create a new BarChart object (the constructor will filter further based on the selected airport).
+    barChart = new BarChart(filteredFlights);
+    // Switch to bar chart screen.
+    currentScreen = 1;
     clickHandled = true;
   }
-  
-  // Check Search Bar click.
-  /*
-  if (isMouseOver(searchX, searchY, searchW, searchH)) {
-    searchActive = !searchActive;
-    clickHandled = true;
-  }*/
-  
-  // Check Search Dropdown click (if active).
-  /*
-  if (searchActive) {
-    int dropdownX = searchX;
-    int dropdownY = searchY + searchH;
-    int dropdownW = searchW;
-    int dropdownH = usStates.length * searchDropdownItemHeight;
-    
-    if (isMouseOver(dropdownX, dropdownY, dropdownW, dropdownH)) {
-      int index = (mouseY - dropdownY) / searchDropdownItemHeight;
-      if (index >= 0 && index < usStates.length) {
-        searchText = usStates[index];
-        searchActive = false;
-      }
-      clickHandled = true;
-    }
-  }*/
   
   // Check Calendar area click (if active).
   if (dateRangeActive) {
@@ -695,10 +699,6 @@ void mousePressed() {
     dateRangeActive = false;
     searchActive = false;
   }
-  
-  // going to implement when search button added by front end.
-  //ArrayList<Flight> filteredFlightsNotDest = limitedFlights(startDate, endDate, flights, isLate);
-  
 }
 
 
@@ -749,13 +749,10 @@ ArrayList<Flight> limitedFlights(int startDateEntered, int endDateEntered, Array
   
   if(startDateEntered <= endDateEntered){
     dates = getRangeOfDates(startDateEntered, endDateEntered);
-    
   }
   else{
     dates = getRangeOfDates(endDateEntered, startDateEntered);
-
   }
-  
   
   if (startDateEntered >= endDateEntered){
     startDateStr = dates[1];
