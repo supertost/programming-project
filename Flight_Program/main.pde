@@ -197,7 +197,7 @@ void draw() {
     } else if (selectionDorO.equals("Origin")) {
       title = isLate ? "Late Flights from " : "On Time Flights from ";
     }
-    title += selectedState + ", " + selectedAirport;
+    title += selectedState + ", " + selectedAirport + ": (" + startDate + "/1/2022 - "+ endDate + "/1/2022)"  ;
     textAlign(CENTER, TOP);
     text(title, screenW/2, 120);
     
