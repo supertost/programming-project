@@ -50,6 +50,12 @@ int dateButtonX = originX + buttonW + 20, dateButtonY = destY, dateButtonW = 250
 int toggleX = dateButtonX + dateButtonW + 20, toggleY = destY + 9;
 int searchX = toggleX + 150, searchY = destY, searchW = 200, searchH = 40;
 
+// New Search Button position
+int searchButtonX = searchX + searchW + 20;
+int searchButtonY = searchY;
+int searchButtonW = 100;
+int searchButtonH = 40;
+
 boolean isLate = false;
 
 // Date range variables
@@ -100,8 +106,7 @@ int airportPopupH = 400;
 // ------------------------
 // Flight Class
 // ------------------------
-
-
+// (Flight class is defined in its own file)
 
 // ------------------------
 // setup() Function
@@ -201,6 +206,7 @@ void drawHeader() {
   drawDateButton(dateButtonX, dateButtonY, dateButtonW, dateButtonH);
   drawToggle(toggleX, toggleY, "Late", isLate);
   drawSearchBar(searchX, searchY, searchW, searchH, searchText);
+  drawSearchButton(searchButtonX, searchButtonY, searchButtonW, searchButtonH, "Search");
 }
 
 
@@ -286,6 +292,18 @@ void drawSearchBar(int x, int y, int w, int h, String textContent) {
   fill(0);
   textAlign(LEFT, CENTER);
   text(" " + textContent, x + 5, y + h/2);
+}
+
+
+// New function to draw the Search Button.
+void drawSearchButton(int x, int y, int w, int h, String label) {
+  noStroke();
+  if (isMouseOver(x, y, w, h)) fill(255, 255, 255, 255);
+  else fill(255, 255, 255, 220);
+  rect(x, y, w, h, 10);
+  fill(0);
+  textAlign(CENTER, CENTER);
+  text(label, x + w/2, y + h/2);
 }
 
 
@@ -595,7 +613,7 @@ void mousePressed() {
     showAirportsPopup = false;
     clickHandled = true;
     
-        dateRangeActive = false;
+    dateRangeActive = false;
     selectingStart = false;
   }
   
@@ -606,6 +624,13 @@ void mousePressed() {
   }
   if (isMouseOver(toggleX + 80, toggleY, 20, 25)) {
     isLate = !isLate;
+    clickHandled = true;
+  }
+  
+  // Check Search Button click.
+  if (isMouseOver(searchButtonX, searchButtonY, searchButtonW, searchButtonH)) {
+    println("Search button clicked");
+    // Place search functionality here.
     clickHandled = true;
   }
   
@@ -715,7 +740,7 @@ String[] getRangeOfDates(int startDate, int endDate) {
   return array;
 }
 
-  ArrayList<Flight> limitedFlights(int startDateEntered, int endDateEntered, ArrayList<Flight> flights, boolean isLate) {
+ArrayList<Flight> limitedFlights(int startDateEntered, int endDateEntered, ArrayList<Flight> flights, boolean isLate) {
   ArrayList<Flight> sortedFlights = new ArrayList<Flight>();
   
   String[] dates;
