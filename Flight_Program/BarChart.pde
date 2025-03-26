@@ -8,6 +8,7 @@ class BarChart {
   
   // Dimensions for the chart area
   int chartX, chartY, chartW, chartH;
+  float barWidth;
 
   BarChart(ArrayList<Flight> filteredFlights) {
     stateCounts = new HashMap<String, Integer>();
@@ -66,10 +67,17 @@ class BarChart {
       text("No flights to display for these filters.", chartX + chartW/2, chartY + chartH/2);
       return;
     }
-    
-    // Bar width and spacing
-    float barWidth = chartW / (float) numBars;
-    
+        
+    if (numBars < 7 ) {
+      
+       barWidth = 100.0;    
+    }
+    else {     
+       // Bar width and spacing
+        barWidth = chartW / (float) numBars;  
+    }
+      
+        
     // We'll use a smaller text for state labels to help avoid overlap
     textSize(12);
     textAlign(CENTER, TOP);
@@ -87,6 +95,29 @@ class BarChart {
       float y = chartY + chartH - barHeight - 20; 
       // Move up 20 more pixels to leave space at bottom for state labels
       
+      if (numBars == 1) {        
+        x = 570;       
+      }
+      
+      if (numBars == 2) {
+        x = 520 + i * barWidth;
+      }
+      
+      if (numBars == 3) {
+        x = 470 + i * barWidth;
+      }
+      
+      if (numBars == 4) {
+        x = 420 + i * barWidth;
+      }
+      
+      if (numBars == 5) {
+        x = 370 + i * barWidth;
+      }
+      if (numBars == 6) {
+        x = 320 + i * barWidth;
+      }
+           
       // Bar color
       fill(80, 140, 255);
       noStroke();
