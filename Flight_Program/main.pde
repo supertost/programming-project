@@ -805,6 +805,12 @@ void mousePressed() {
 
     // Filter flights based on the date range and late condition.
     ArrayList<Flight> filteredFlights = limitedFlights(startDate, endDate, flights, isLate);
+    
+    ArrayList<Flight> filteredFlightsNotDest = limitedFlights(startDate, endDate, flights, isLate);
+
+    ArrayList<Flight> filteredFlightsDest = destFiltering(filteredFlightsNotDest, selectionDorO, selectedAirport, selectedState);
+
+
 
     // Create a new BarChart object (the constructor will filter further based on the selected airport).
     barChart = new BarChart(filteredFlights);
@@ -1075,4 +1081,36 @@ void populateAirportsForState() {
   }
 
   airportsToShow.sort(null);
+}
+
+// -- Dev Joshi 
+ArrayList<Flight> destFiltering(ArrayList<Flight> filteredFlightsNotDest, String selectionDorO, String selectedAirport, String selectedState) {
+
+ArrayList<Flight> array = new ArrayList<Flight>();
+
+if (selectionDorO.equals("Origin")) {
+ for (int i = 0; i < filteredFlightsNotDest.size(); i++) {
+   Flight flight = filteredFlightsNotDest.get(i);
+   if (flight.origin.equals(selectedAirport) && flight.originState.equals(selectedState)) {
+     array.add(flight);
+   }
+   
+ } 
+ 
+ 
+} else {
+ 
+ for (int i = 0; i < filteredFlightsNotDest.size(); i++) {
+   Flight flight = filteredFlightsNotDest.get(i);
+   if (flight.destination.equals(selectedAirport) && flight.destState.equals(selectedState)) {
+     array.add(flight);
+   }
+   
+ } 
+ 
+}
+
+return array;
+
+
 }
