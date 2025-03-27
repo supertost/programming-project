@@ -812,7 +812,7 @@ void mousePressed() {
     selectingStart = false;
 
     
-    if ((!selectionDorO.equals("")) && startDate != -1 && endDate != -1) {
+    if ((!selectionDorO.equals("")) && !selectedState.equals("") && !selectedAirport.equals("") && startDate != -1 && endDate != -1) {
       
       println("Search button clicked");
 
