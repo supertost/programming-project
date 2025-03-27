@@ -4,6 +4,7 @@
 
 // constant window dimensions
 PImage bg;
+PImage bg2;
 final int SCREEN_WIDTH = 1200;
 final int SCREEN_HEIGHT = 800;
 final int HEADER_HEIGHT = 150;
@@ -40,8 +41,8 @@ int searchButtonW = 100;
 int searchButtonH = 40;
 
 
-int backButtonX = searchX + searchW + 20;
-int backButtonY = searchY;
+int backButtonX = 1050;
+int backButtonY = -100;
 int backButtonW = 100;
 int backButtonH = 40;
 
@@ -109,6 +110,7 @@ void setup() {
   
   // Loads the background image
   bg = loadImage("background.png");
+  bg2 = loadImage("background3.png");
   
   // Load fonts
   mono = createFont("Fonts/Helvetica.ttf", 30);
@@ -188,6 +190,15 @@ void draw() {
   } 
   
   else if (currentScreen == 1) {
+
+    if (bg2 != null) {
+      
+      image(bg2, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+    }
+    else {
+
+      background(240);
+    }
    
     // Putting the back button in focus
     backButtonY = searchY;
@@ -196,7 +207,6 @@ void draw() {
     searchButtonY = searchY + height + 1000;
     
     // Bar chart screen.
-    background(240);
     // Display the title
     fill(0);
     textFont(mono2);
@@ -214,7 +224,11 @@ void draw() {
     
     title += selectedState + ", " + selectedAirport + ": (" + startDate + "/1/2022 - "+ endDate + "/1/2022)"  ;
     textAlign(CENTER, TOP);
-    text(title, SCREEN_WIDTH/2, 120);
+    text(title, SCREEN_WIDTH/2, 120 - 85);
+
+
+    textFont(mono);
+    textSize(20);
     drawBackButton(backButtonX, backButtonY, backButtonW, backButtonH);
     
     // Display the bar chart
@@ -706,6 +720,8 @@ void mousePressed() {
   // Check if click is on fused Date Range button.
   if (isMouseOver(dateButtonX, dateButtonY, dateButtonW, dateButtonH)) {
 
+    showErrorSearch = false;
+
     if (!dateRangeActive) {
 
       dateRangeActive = true;
@@ -742,6 +758,8 @@ void mousePressed() {
     
     dateRangeActive = false;
     selectingStart = false;
+
+    showErrorSearch = false;
   }
   
   // Check Origin button.
@@ -767,6 +785,8 @@ void mousePressed() {
     
     dateRangeActive = false;
     selectingStart = false;
+
+    showErrorSearch = false;
   }
   
   // Check Toggle.
@@ -784,6 +804,13 @@ void mousePressed() {
   
   // Check Search Button click.
   if (isMouseOver(searchButtonX, searchButtonY, searchButtonW, searchButtonH)) {
+    
+    showStatesPopup = false;
+    showAirportsPopup = false;
+    
+    dateRangeActive = false;
+    selectingStart = false;
+
     
     if ((!selectionDorO.equals("")) && startDate != -1 && endDate != -1) {
       
@@ -833,6 +860,8 @@ void mousePressed() {
     int calX = SCREEN_WIDTH/2 - 110 - 115, calY = SCREEN_HEIGHT/2 - 120 - 120;
 
     if (isMouseOver(calX, calY, 220, 240)) {
+
+      showErrorSearch = false;
 
       int gridStartX = calX + 20;
       int gridStartY = calY + 60;

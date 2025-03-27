@@ -44,7 +44,7 @@ class BarChart {
   void display() {
     // Light background for the chart (no black border)
     noStroke();
-    fill(240);   // light, subtle background color
+    fill(255, 0);   // light, subtle background color
     rect(chartX, chartY, chartW, chartH, 10);
     
     // Determine the maximum frequency to scale bar heights.
@@ -136,7 +136,7 @@ class BarChart {
     
     // Axis labels: "States" and "Frequency"
     fill(0);
-    textSize(30);
+    textSize(25);
     
     // X-axis label (States)
     textAlign(CENTER, TOP);
@@ -144,7 +144,7 @@ class BarChart {
     
     // Y-axis label (Frequency) - rotated
     pushMatrix();
-    translate(chartX - 40, chartY + chartH / 2);
+    translate(chartX - 40 - 5, chartY + chartH / 2);
     rotate(-HALF_PI);
     textAlign(CENTER, CENTER);
     text("Frequency", 0, 0);
