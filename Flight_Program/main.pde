@@ -1,23 +1,3 @@
-/****************************************************************/
-/******COMMENT FOR THE BACKEND TEAM FROM THE FRONTEND TEAM*******/
-/*
-
-       For the destination and origin button, the variable for that is called "selectionDorO" -- Contents of this can either be "Destination" or "Origin" as written here
-       
-       For the calendar, there are the "startDate" and the "endDate" variables -- These variables hold an integer value from 1 to 31. For example if the "startDate" is 4 then the selected date is 4th of January 2022.
-       As the date range is only between January 2022, we do not need any variables for the month or the year.
-       
-       For the late button, there is a boolean variable called "isLate" this variable is false by default, when switched on it turns into true.
-       
-       Lastly for the Search Bar, there is the "searchText" variable. After the user selects a state (using its abbreviation) and then an airport, the search bar will show the state and the airport chosen.
-       
-       selected airport in variable selectedAirport and state in selectedState
-       
-       Sincerely
-       - Emir Dilekci
-
-*/
-
 // ------------------------
 // Global Variables
 // ------------------------
@@ -65,6 +45,7 @@ int backButtonY = searchY;
 int backButtonW = 100;
 int backButtonH = 40;
 
+boolean showErrorSearch = false;
 
 boolean isLate = false;
 
@@ -76,10 +57,6 @@ boolean selectingStart = true;    // if true, next date sets start; else sets en
 // Search bar variables
 boolean searchActive = false;
 String searchText = "Search US State";
-
-// Global variables for the search dropdown
-String[] usStates = {"Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia"};
-int searchDropdownItemHeight = 25;
 
 // Creating the custom fonts
 PFont mono;
@@ -201,6 +178,11 @@ void draw() {
     if (dateRangeActive) {
       
       drawCalendar(SCREEN_WIDTH/2 - 110, SCREEN_HEIGHT/2 - 120);
+    }
+
+    if (showErrorSearch == true) {
+
+      showErrorSearch();
     }
     
   } 
@@ -802,23 +784,40 @@ void mousePressed() {
   
   // Check Search Button click.
   if (isMouseOver(searchButtonX, searchButtonY, searchButtonW, searchButtonH)) {
-
-    println("Search button clicked");
-
-    // Filter flights based on the date range and late condition.
-    ArrayList<Flight> filteredFlights = limitedFlights(startDate, endDate, flights, isLate);
     
-    ArrayList<Flight> filteredFlightsNotDest = limitedFlights(startDate, endDate, flights, isLate);
+    if ((!selectionDorO.equals("")) && startDate != -1 && endDate != -1) {
+      
+      println("Search button clicked");
 
-    ArrayList<Flight> filteredFlightsDest = destFiltering(filteredFlightsNotDest, selectionDorO, selectedAirport, selectedState);
+      // Filter flights based on the date range and late condition.
+      ArrayList<Flight> filteredFlights = limitedFlights(startDate, endDate, flights, isLate);
+      
+      ArrayList<Flight> filteredFlightsNotDest = limitedFlights(startDate, endDate, flights, isLate);
+
+      ArrayList<Flight> filteredFlightsDest = destFiltering(filteredFlightsNotDest, selectionDorO, selectedAirport, selectedState);
 
 
-    // Create a new BarChart object (the constructor will filter further based on the selected airport).
-    barChart = new BarChart(filteredFlights);
+      // Create a new BarChart object (the constructor will filter further based on the selected airport).
+      barChart = new BarChart(filteredFlights);
 
-    // Switch to bar chart screen.
-    currentScreen = 1;
-    clickHandled = true;
+      // Switch to bar chart screen.
+      currentScreen = 1;
+      clickHandled = true; 
+    }
+    else {
+
+      showErrorSearch = true;
+      showErrorSearch();
+
+      println("Please select an origin or destination and a date");
+    }
+  }
+
+
+  if (isMouseOver(width/2 - 500, height/2 - 100, 1000, 200)) {
+
+    showErrorSearch = false;
+    println(showErrorSearch);
   }
   
   if (isMouseOver(backButtonX, backButtonY, backButtonW, backButtonH)) {
@@ -883,6 +882,19 @@ void mousePressed() {
     searchActive = false;
   }
 }
+
+void showErrorSearch() {
+
+    fill(0, 100);
+    rect(width/2 - 500, height/2 - 100, 1000, 200, 20);
+
+    fill(255, 175);
+    rect(width/2 - 500, height/2 - 100, 1000, 200, 20);
+    textFont(mono2);
+    fill(0);
+    text("Please select an origin or a destination point and a date", width/2, height/2);
+}
+
 
 
 // Helper Functions
