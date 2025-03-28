@@ -9,7 +9,7 @@ final int SCREEN_WIDTH = 1200;
 final int SCREEN_HEIGHT = 800;
 final int HEADER_HEIGHT = 150;
 
-// Global screen indicator: 0 = main UI, 1 = bar chart screen.
+// Global screen indicator: 0 = main UI, 1 = chart screen.
 int currentScreen = 0;
 
 // RGB Colour Variable For The ORIGIN button
@@ -39,7 +39,6 @@ int searchButtonX = searchX + searchW + 20;
 int searchButtonY = searchY;
 int searchButtonW = 100;
 int searchButtonH = 40;
-
 
 int backButtonX = 1050;
 int backButtonY = -100;
@@ -97,6 +96,17 @@ int airportPopupH = 400;
 // ------------------------
 BarChart barChart;
 
+// ------------------------
+// NEW Global Variables for Header Menu (Chart Views)
+// ------------------------
+String chartType = "Bar Chart"; // default view after search
+
+// Header Menu Button positions and dimensions
+int headerMenuXStart = 230;
+int headerMenuY = 10;
+int headerMenuButtonW = 150;
+int headerMenuButtonH = 40;
+int headerMenuButtonGap = 45;
 
 void setup() {
   
@@ -138,8 +148,6 @@ void setup() {
     flights.add(flight);
   }
 }
-
-
 
 void draw() {
   
@@ -183,20 +191,16 @@ void draw() {
     }
 
     if (showErrorSearch == true) {
-
       showErrorSearch();
     }
     
   } 
-  
   else if (currentScreen == 1) {
 
     if (bg2 != null) {
-      
       image(bg2, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     }
     else {
-
       background(240);
     }
    
@@ -206,41 +210,64 @@ void draw() {
     // Putting the search button out of focus
     searchButtonY = searchY + height + 1000;
     
-    // Bar chart screen.
-    // Display the title
-    fill(0);
-    textFont(mono2);
-    textSize(32);
-    String title = "";
+    // ------------------------
+    // NEW: Draw the Header Menu for Chart Views with a distinct background color
+    // ------------------------
+    drawHeaderMenu();
     
-    if (selectionDorO.equals("Destination")) {
+    // ------------------------
+    // NEW: Draw the Bar Chart title only when the Bar Chart view is active.
+    //       The title is moved a bit lower.
+    // ------------------------
+    if (chartType.equals("Bar Chart")) {
+      fill(0);
+      textFont(mono2);
+      textSize(32);
+      textAlign(CENTER, TOP);
+      String title = "";
       
-      title = isLate ? "Late Flights to " : "On Time Flights to ";
-    } 
-    else if (selectionDorO.equals("Origin")) {
+      if (selectionDorO.equals("Destination")) {
+        title = isLate ? "Late Flights to " : "On Time Flights to ";
+      } 
+      else if (selectionDorO.equals("Origin")) {
+        title = isLate ? "Late Flights from " : "On Time Flights from ";
+      }
       
-      title = isLate ? "Late Flights from " : "On Time Flights from ";
+      title += selectedState + ", " + selectedAirport + ": (" + startDate + "/1/2022 - "+ endDate + "/1/2022)"  ;
+      // Moved further down (e.g., y = 70) so it doesn't interfere with header menu
+      text(title, SCREEN_WIDTH/2, 106);
     }
     
-    title += selectedState + ", " + selectedAirport + ": (" + startDate + "/1/2022 - "+ endDate + "/1/2022)"  ;
-    textAlign(CENTER, TOP);
-    text(title, SCREEN_WIDTH/2, 120 - 85);
-
-
+    // ------------------------
+    // NEW: Display the selected chart view based on header menu selection
+    // ------------------------
+    if(chartType.equals("Bar Chart")) {
+      if (barChart != null) {
+        barChart.display();
+      }
+    }
+    else if(chartType.equals("Line Graph")) {
+      drawLineGraph();
+    }
+    else if(chartType.equals("Pie Chart")) {
+      drawPieChart();
+    }
+    else if(chartType.equals("3D Map")) {
+      draw3DMap();
+    }
+    
+    // Draw the back button on top of everything
     textFont(mono);
     textSize(20);
     drawBackButton(backButtonX, backButtonY, backButtonW, backButtonH);
-    
-    // Display the bar chart
-    if (barChart != null) {
-      
-      barChart.display();
-    }
   }
 }
 
 
-// Function to draw the header
+// ------------------------
+// Original UI Drawing Functions
+// ------------------------
+
 void drawHeader() {
 
   noStroke();
@@ -266,110 +293,70 @@ void drawHeader() {
   drawSearchButton(searchButtonX, searchButtonY, searchButtonW, searchButtonH, "Search");
 }
 
-
 boolean isMouseOver(int x, int y, int w, int h) {
-
   return (mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h);
 }
 
-
 void drawButtonD(int x, int y, int w, int h, String label) {
-
   noStroke();
-
   if (isMouseOver(x, y, w, h) && !selectionDorO.equals("Destination")) {
-
     fill(255, 255, 255, 255);
-  } 
-  else {
-
+  } else {
     fill(colourValueButtonDestR, colourValueButtonDestG, colourValueButtonDestB, 220);
   }
-
   rect(x, y, w, h, 10);
   fill(0);
   textAlign(CENTER, CENTER);
   text(label, x + w/2, y + h/2);
 }
-
 
 void drawButtonO(int x, int y, int w, int h, String label) {
-
   noStroke();
-
   if (isMouseOver(x, y, w, h) && !selectionDorO.equals("Origin")) {
-
     fill(255, 255, 255, 255);
-  } 
-  else {
-
+  } else {
     fill(colourValueButtonOriginR, colourValueButtonOriginG, colourValueButtonOriginB, 220);
   }
-
   rect(x, y, w, h, 10);
   fill(0);
   textAlign(CENTER, CENTER);
   text(label, x + w/2, y + h/2);
 }
 
-
 void drawDateButton(int x, int y, int w, int h) {
-
   noStroke();
-
   if (isMouseOver(x, y, w, h)) {
-    
     fill(255, 255, 255, 255);
-  }
-  else {
-    
+  } else {
     fill(255, 255, 255, 220);
   }
-
   rect(x, y, w, h, 10);
   fill(0);
   textAlign(CENTER, CENTER);
-
   if (startDate == -1) {
-
     text("Pick Date Range", x + w/2, y + h/2);
-  } 
-  else if (startDate != -1 && endDate == -1) {
-
+  } else if (startDate != -1 && endDate == -1) {
     text("Start: " + startDate + " (select End Date)", x + w/2, y + h/2);
-  }
-  else {
-
+  } else {
     if (startDate <= endDate){
-
       text("Start: " + startDate + "   End: " + endDate, x + w/2, y + h/2);
-    }
-
-    else {
-
+    } else {
       text("Start: " + endDate + "   End: " + startDate, x + w/2, y + h/2);
     }
   }
 }
 
-
 void drawToggle(int x, int y, String label, boolean active) {
-
   fill(255);
   textAlign(LEFT, CENTER);
   text(label, x + 15, y + 11);
   
   noStroke();
-
   if (isMouseOver(x+60, y, 40, 25)) {
-
     fill(active ? color(0, 220, 0) : color(220));
-  }   
-  else {
-
+  } else {
     fill(active ? color(0, 200, 0) : color(200));
   }
-
   rect(x + 60, y, 40, 25, 12);
   
   fill(255);
@@ -377,70 +364,46 @@ void drawToggle(int x, int y, String label, boolean active) {
   rect(knobX, y, 20, 25, 12);
 }
 
-
 void drawSearchBar(int x, int y, int w, int h, String textContent) {
-
   noStroke();
-
   if (isMouseOver(x, y, w, h)) {
-    
     fill(255, 255, 255, 255);
-  }
-  else {
-    
+  } else {
     fill(255, 255, 255, 220);
   }
-
   rect(x, y, w, h, 10);
   fill(0);
   textAlign(LEFT, CENTER);
   text(" " + textContent, x + 5, y + h/2);
 }
 
-
-// New function to draw the Search Button.
 void drawSearchButton(int x, int y, int w, int h, String label) {
-
   noStroke();
-
   if (isMouseOver(x, y, w, h)) {
-    
     fill(255, 255, 255, 255);
-  }
-  else {
-    
+  } else {
     fill(255, 255, 255, 220);
   }
-
   rect(x, y, w, h, 10);
   fill(0);
   textAlign(CENTER, CENTER);
   text(label, x + w/2, y + h/2);
 }
 
-// Back button to return back to the ain menu from the bar chart menu
 void drawBackButton(int x, int y, int w, int h) {
-
   noStroke();
-
   if (isMouseOver(x, y, w, h)) {
-    
     fill(255, 255, 255, 255);
-  }
-  else {
-   
+  } else {
     fill(255, 255, 255, 220);
   }
-
   rect(x, y, w, h, 10);
   fill(0);
   textAlign(CENTER, CENTER);
   text("Back", x + w/2, y + h/2);
 }
 
-
 void drawCalendar(int x, int y) {
-
   // Calendar container
   noStroke();
   fill(240, 170);
@@ -459,47 +422,31 @@ void drawCalendar(int x, int y) {
   int day = 1;
   
   for (int row = 0; row < 5; row++) {
-
     for (int col = 0; col < 7; col++) {
-
       if (day > 31) {
-        
         break;
       }
-
       int cellX = gridStartX + col * colWidth;
       int cellY = gridStartY + row * rowHeight;
       
       // Highlight: start date, end date, and in-between range
       if (day == startDate) {
-
         fill(0, 150, 255); 
-      } 
-      else if (day == endDate) {
-
+      } else if (day == endDate) {
         fill(0, 100, 255);
-      } 
-      else if (startDate != -1 && endDate != -1 && day > startDate && day < endDate) {
-        
+      } else if (startDate != -1 && endDate != -1 && day > startDate && day < endDate) {
         fill(200, 200, 255);
-      } 
-      else if (startDate != -1 && endDate != -1 && day < startDate && day > endDate) {
-        
+      } else if (startDate != -1 && endDate != -1 && day < startDate && day > endDate) {
         fill(200, 200, 255);
-      } 
-      else {
-        
+      } else {
         fill(255);
       }
       
       // If hovered over a cell, add a border highlight
       if (isMouseOver(cellX - 10, cellY - 10, 25, 25)) {
-
         stroke(255, 0, 0);
         strokeWeight(2);
-      } 
-      else {
-
+      } else {
         noStroke();
       }
       
@@ -514,10 +461,7 @@ void drawCalendar(int x, int y) {
   }
 }
 
-
-// Function to draw the state selection screen
 void drawStatesPopup() {
-
   // Draw a white rectangle (popup) with a border.
   noStroke();
   fill(255, 240);
@@ -548,7 +492,6 @@ void drawStatesPopup() {
   textAlign(LEFT, CENTER);
 
   for (int i = 0; i < statesToShow.size(); i++) {
-
     int col = i % cols;
     int row = i / cols;
     int x = startX + col * gapX;
@@ -558,24 +501,18 @@ void drawStatesPopup() {
     
     // If this state is selected, draw a blue border around its text.
     if (statesToShow.get(i).equals(selectedState)) {
-
       noFill();
       stroke(0, 0, 255);
       strokeWeight(2);
-
       float tw = textWidth(statesToShow.get(i));
       float th = textAscent() + textDescent();
       rect(x - 2, y - th/2 - 2, tw + 4, th + 4);
-
       noStroke();
     }
   }
 }
 
-
-// Function to draw the airport selection screen
 void drawAirportsPopup() {
-  
   // Draw a white rectangle (popup) with a border.
   noStroke();
   fill(255, 240);
@@ -596,7 +533,7 @@ void drawAirportsPopup() {
   text("Airports (" + selectedState + ")", airportPopupX + airportPopupW/2, airportPopupY + 30);
   
   // Display the airports in a grid inside the popup.
-  int cols = 2; // Adjust number of columns as needed.
+  int cols = 2;
   int gapX = (airportPopupW - 20) / cols;
   int gapY = 30;
   int startX = airportPopupX + 10;
@@ -606,7 +543,6 @@ void drawAirportsPopup() {
   textAlign(LEFT, CENTER);
 
   for (int i = 0; i < airportsToShow.size(); i++) {
-
     int col = i % cols;
     int row = i / cols;
     int x = startX + col * gapX;
@@ -616,62 +552,131 @@ void drawAirportsPopup() {
     
     // If this airport is selected, draw a blue border around its text.
     if (airportsToShow.get(i).equals(selectedAirport)) {
-      
       noFill();
       stroke(0, 0, 255);
-
       float tw = textWidth(airportsToShow.get(i));
       float th = textAscent() + textDescent();
       rect(x - 2, y - th/2 - 2, tw + 4, th + 4);
-
       noStroke();
     }
   }
 }
 
+// ------------------------
+// NEW: Header Menu Drawing Function for Chart Views with distinct background color
+// ------------------------
+void drawHeaderMenu() {
+  // Draw header menu background (distinct color)
+  noStroke();
+  fill(10, 52, 99); // New background color for header menu
+  rect(0, 0, SCREEN_WIDTH, headerMenuButtonH + 20);
+  
+  int x = headerMenuXStart;
+  // Set consistent text style for menu buttons
+  textFont(mono2);
+  textSize(16);
+  drawChartMenuButton(x, headerMenuY, headerMenuButtonW, headerMenuButtonH, "Line Graph", chartType.equals("Line Graph"));
+  x += headerMenuButtonW + headerMenuButtonGap;
+  drawChartMenuButton(x, headerMenuY, headerMenuButtonW, headerMenuButtonH, "Bar Chart", chartType.equals("Bar Chart"));
+  x += headerMenuButtonW + headerMenuButtonGap;
+  drawChartMenuButton(x, headerMenuY, headerMenuButtonW, headerMenuButtonH, "Pie Chart", chartType.equals("Pie Chart"));
+  x += headerMenuButtonW + headerMenuButtonGap;
+  drawChartMenuButton(x, headerMenuY, headerMenuButtonW, headerMenuButtonH, "3D Map", chartType.equals("3D Map"));
+}
 
-// Function that controls the mouse clickes
+// Helper function to draw an individual header menu button.
+void drawChartMenuButton(int x, int y, int w, int h, String label, boolean active) {
+  noStroke();
+  if (active) {
+    fill(200, 200, 255);
+  } else {
+    fill(255, 255, 255, 220);
+  }
+  rect(x, y, w, h, 10);
+  fill(0);
+  textAlign(CENTER, CENTER);
+  text(label, x + w/2, y + h/2);
+}
+
+// ------------------------
+// NEW: Stub functions for additional chart views (replace with your implementations)
+// ------------------------
+void drawLineGraph() {
+  fill(0);
+  textFont(mono2);
+  textSize(40);
+  textAlign(CENTER, CENTER);
+  text("Line Graph View", SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
+}
+
+void drawPieChart() {
+  fill(0);
+  textFont(mono2);
+  textSize(40);
+  textAlign(CENTER, CENTER);
+  text("Pie Chart View", SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
+}
+
+void draw3DMap() {
+  fill(0);
+  textFont(mono2);
+  textSize(40);
+  textAlign(CENTER, CENTER);
+  text("3D Map View", SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
+}
+
+// ------------------------
+// Mouse Click Handling
+// ------------------------
 void mousePressed() {
-
-  // If the states popup is visible, check for its interactions.
-  if (showStatesPopup) {
-
-    // Check for the states popup "Close" button.
-    int closeBtnX = popupX + popupW - 25;
-    int closeBtnY = popupY + 5;
-
-    if (isMouseOver(closeBtnX, closeBtnY, 20, 20)) {
-
-      showStatesPopup = false;
-      showAirportsPopup = false;
-
+  
+  // NEW: Header Menu click detection for chart views (active on chart screen)
+  if (currentScreen == 1) {
+    int x = headerMenuXStart;
+    if (isMouseOver(x, headerMenuY, headerMenuButtonW, headerMenuButtonH)) {
+      chartType = "Line Graph";
       return;
     }
-
-    // Check if a state is clicked.
+    x += headerMenuButtonW + headerMenuButtonGap;
+    if (isMouseOver(x, headerMenuY, headerMenuButtonW, headerMenuButtonH)) {
+      chartType = "Bar Chart";
+      return;
+    }
+    x += headerMenuButtonW + headerMenuButtonGap;
+    if (isMouseOver(x, headerMenuY, headerMenuButtonW, headerMenuButtonH)) {
+      chartType = "Pie Chart";
+      return;
+    }
+    x += headerMenuButtonW + headerMenuButtonGap;
+    if (isMouseOver(x, headerMenuY, headerMenuButtonW, headerMenuButtonH)) {
+      chartType = "3D Map";
+      return;
+    }
+  }
+  
+  // If the states popup is visible, check for its interactions.
+  if (showStatesPopup) {
+    int closeBtnX = popupX + popupW - 25;
+    int closeBtnY = popupY + 5;
+    if (isMouseOver(closeBtnX, closeBtnY, 20, 20)) {
+      showStatesPopup = false;
+      showAirportsPopup = false;
+      return;
+    }
     int cols = 3;
     int gapX = (popupW - 20) / cols;
     int gapY = 30;
     int startX = popupX + 10;
     int startY = popupY + 60;
-
     for (int i = 0; i < statesToShow.size(); i++) {
-
       int col = i % cols;
       int row = i / cols;
       int cellX = startX + col * gapX;
       int cellY = startY + row * gapY;
-
       if (mouseX >= cellX && mouseX <= cellX + gapX && mouseY >= cellY - gapY/2 && mouseY <= cellY + gapY/2) {
-
         selectedState = statesToShow.get(i);
-
-        // Update searchText with the state abbreviation.
         searchText = selectedState;
-
-        // Populate the airports list for the selected state.
         populateAirportsForState();
-
         showAirportsPopup = true;
         return;
       }
@@ -680,36 +685,25 @@ void mousePressed() {
   
   // If the airports popup is visible, check for its interactions.
   if (showAirportsPopup) {
-
     int closeBtnX = airportPopupX + airportPopupW - 25;
     int closeBtnY = airportPopupY + 5;
-
     if (isMouseOver(closeBtnX, closeBtnY, 20, 20)) {
-
       showAirportsPopup = false;
       return;
     }
-
     int cols = 2;
     int gapX = (airportPopupW - 20) / cols;
     int gapY = 30;
     int startX = airportPopupX + 10;
     int startY = airportPopupY + 60;
-
     for (int i = 0; i < airportsToShow.size(); i++) {
-
       int col = i % cols;
       int row = i / cols;
       int cellX = startX + col * gapX;
       int cellY = startY + row * gapY;
-
       if (mouseX >= cellX && mouseX <= cellX + gapX && mouseY >= cellY - gapY/2 && mouseY <= cellY + gapY/2) {
-
         selectedAirport = airportsToShow.get(i);
-
-        // Update searchText to include both the state and the airport.
         searchText = selectedState + " - " + selectedAirport;
-
         return;
       }
     }
@@ -719,11 +713,8 @@ void mousePressed() {
   
   // Check if click is on fused Date Range button.
   if (isMouseOver(dateButtonX, dateButtonY, dateButtonW, dateButtonH)) {
-
     showErrorSearch = false;
-
     if (!dateRangeActive) {
-
       dateRangeActive = true;
       selectingStart = true;
       startDate = -1;
@@ -731,192 +722,138 @@ void mousePressed() {
       showStatesPopup = false;
       showAirportsPopup = false;
     }
-
     clickHandled = true;
   }
   
   // Check Destination button.
   if (isMouseOver(destX, destY, buttonW, buttonH)) {
-
     println("Destination button clicked");
     selectionDorO = "Destination";
-
     colourValueButtonDestR = 255;
     colourValueButtonDestG = 100;
     colourValueButtonDestB = 255;
-
     colourValueButtonOriginR = 255;
     colourValueButtonOriginG = 255;
     colourValueButtonOriginB = 255;
     opacityValueButtonOrigin = 220;
-    
     populateStatesListForSelection();
-
     showStatesPopup = true;
     showAirportsPopup = false;
     clickHandled = true;
-    
     dateRangeActive = false;
     selectingStart = false;
-
     showErrorSearch = false;
   }
   
   // Check Origin button.
   if (isMouseOver(originX, originY, buttonW, buttonH)) {
-
     println("Origin button clicked");
     selectionDorO = "Origin";
-
     colourValueButtonOriginR = 255;
     colourValueButtonOriginG = 100;
     colourValueButtonOriginB = 255;
     opacityValueButtonOrigin = 220;
-
     colourValueButtonDestR = 255;
     colourValueButtonDestG = 255;
     colourValueButtonDestB = 255;
-    
     populateStatesListForSelection();
-
     showStatesPopup = true;
     showAirportsPopup = false;
     clickHandled = true;
-    
     dateRangeActive = false;
     selectingStart = false;
-
     showErrorSearch = false;
   }
   
   // Check Toggle.
   if (isMouseOver(toggleX + 60, toggleY, 20, 25)) {
-
     isLate = !isLate;
     clickHandled = true;
   }
-
   if (isMouseOver(toggleX + 80, toggleY, 20, 25)) {
-
     isLate = !isLate;
     clickHandled = true;
   }
   
   // Check Search Button click.
   if (isMouseOver(searchButtonX, searchButtonY, searchButtonW, searchButtonH)) {
-    
     showStatesPopup = false;
     showAirportsPopup = false;
-    
     dateRangeActive = false;
     selectingStart = false;
-
-    
-    if ((!selectionDorO.equals("")) && !selectedState.equals("") && !selectedAirport.equals("") && startDate != -1 && endDate != -1) {
+    if ((!selectionDorO.equals("")) && !selectedAirport.equals("") && !selectedState.equals("") && startDate != -1 && endDate != -1) {
+      
       
       println("Search button clicked");
-
-      // Filter flights based on the date range and late condition.
-      ArrayList<Flight> filteredFlights = limitedFlights(startDate, endDate, flights, isLate);
       
+      
+      ArrayList<Flight> filteredFlights = limitedFlights(startDate, endDate, flights, isLate);
       ArrayList<Flight> filteredFlightsNotDest = limitedFlights(startDate, endDate, flights, isLate);
-
       ArrayList<Flight> filteredFlightsDest = destFiltering(filteredFlightsNotDest, selectionDorO, selectedAirport, selectedState);
-
-
-      // Create a new BarChart object (the constructor will filter further based on the selected airport).
       barChart = new BarChart(filteredFlights);
-
-      // Switch to bar chart screen.
       currentScreen = 1;
       clickHandled = true; 
     }
     else {
-
       showErrorSearch = true;
       showErrorSearch();
-
       println("Please select an origin or destination and a date");
     }
   }
 
-
   if (isMouseOver(width/2 - 500, height/2 - 100, 1000, 200)) {
-
     showErrorSearch = false;
     println(showErrorSearch);
   }
   
   if (isMouseOver(backButtonX, backButtonY, backButtonW, backButtonH)) {
-
-    // Switch back to the main menu.
+    // When the back button is clicked, return to the home screen.
     currentScreen = 0;
     clickHandled = false;
   }
   
   // Check Calendar area click (if active).
   if (dateRangeActive) {
-
     int calX = SCREEN_WIDTH/2 - 110 - 115, calY = SCREEN_HEIGHT/2 - 120 - 120;
-
     if (isMouseOver(calX, calY, 220, 240)) {
-
       showErrorSearch = false;
-
       int gridStartX = calX + 20;
       int gridStartY = calY + 60;
       int colWidth = 30, rowHeight = 30;
       int day = 1;
-      
       for (int row = 0; row < 5; row++) {
-
         for (int col = 0; col < 7; col++) {
-
           if (day > 31) {
-            
             break;
           }
-
           int cellX = gridStartX + col * colWidth;
           int cellY = gridStartY + row * rowHeight;
-          
           if (isMouseOver(cellX - 10, cellY - 10, 25, 25)) {
-
             if (selectingStart) {
-
               startDate = day;
               selectingStart = false;
-
-            } 
-            else {
-
+            } else {
               endDate = day;
             }
-
             break;
           }
-
           day++;
         }
       }
-
       clickHandled = true;
     }
   }
   
   // If click wasn't on any UI element, hide calendar and search dropdown.
   if (!clickHandled) {
-
     dateRangeActive = false;
     searchActive = false;
   }
 }
 
 void showErrorSearch() {
-
     fill(0, 100);
     rect(width/2 - 500, height/2 - 100, 1000, 200, 20);
-
     fill(255, 175);
     rect(width/2 - 500, height/2 - 100, 1000, 200, 20);
     textFont(mono2);
@@ -926,233 +863,154 @@ void showErrorSearch() {
 
 
 
+// ------------------------
 // Helper Functions
+// ------------------------
 boolean checkIsLate(String expectedTime, String realTime) {
-
   while (expectedTime.length() < 4) {
-
     expectedTime = "0" + expectedTime;
   }
-
   while (realTime.length() < 4) {
-
     realTime = "0" + realTime;
   }
-
   int expectedHour = Integer.parseInt(expectedTime.substring(0, 2));
   int expectedMinute = Integer.parseInt(expectedTime.substring(2, 4));
   int realHour = Integer.parseInt(realTime.substring(0, 2));
   int realMinute = Integer.parseInt(realTime.substring(2, 4));
-
   int expectedTotalMinutes = expectedHour * 60 + expectedMinute;
   int realTotalMinutes = realHour * 60 + realMinute;
-
   return realTotalMinutes > expectedTotalMinutes;
 }
 
 String[] getRangeOfDates(int startDate, int endDate) {
-
   String[] array = new String[2];
   String start;
   String end;
-
   if(startDate <= endDate) {
-    
     start = String.format("01/%02d/2022 00:00", startDate);
     end = String.format("01/%02d/2022 00:00", endDate);
     array[0] = start;
     array[1] = end;
-  }
-  else {
-
+  } else {
     start = String.format("01/%02d/2022 00:00", endDate);
     end = String.format("01/%02d/2022 00:00", startDate);
     array[0] = end;
     array[1] = start;
   }
-
   return array;
 }
 
 ArrayList<Flight> limitedFlights(int startDateEntered, int endDateEntered, ArrayList<Flight> flights, boolean isLate) {
-
   ArrayList<Flight> sortedFlights = new ArrayList<Flight>();
-  
   String[] dates;
   String startDateStr;
   String endDateStr;
-  
   if(startDateEntered <= endDateEntered){
-
     dates = getRangeOfDates(startDateEntered, endDateEntered);
   }
   else{
-
     dates = getRangeOfDates(endDateEntered, startDateEntered);
   }
-  
   if (startDateEntered >= endDateEntered){
-
     startDateStr = dates[1];
     endDateStr = dates[0];
   }
   else{
-
     startDateStr = dates[0];
     endDateStr = dates[1];
   }
-
   int start = Integer.parseInt(startDateStr.substring(3,5));
   int end = Integer.parseInt(endDateStr.substring(3,5));
-  
   for (int i = 0; i < flights.size(); i++) {
-
     Flight flight = flights.get(i);
     String date = flight.date;
-
-    // Normalize the date to ensure it is in "MM/dd/yyyy" (or "MM/dd/yyyy HH:mm") format
     String[] tokens = split(date, " ");
     String datePart = tokens[0];
     String[] dateTokens = split(datePart, "/");
-
     if (dateTokens.length >= 3) {
-
       if (dateTokens[0].length() == 1) {
-
         dateTokens[0] = "0" + dateTokens[0];
       }
-
       if (dateTokens[1].length() == 1) {
-
         dateTokens[1] = "0" + dateTokens[1];
       }
-
       datePart = join(dateTokens, "/");
     }
-
     if (tokens.length > 1) {
-
       date = datePart + " " + tokens[1];
-    } 
-    else {
-
+    } else {
       date = datePart;
     }
-    
     int day = Integer.parseInt(date.substring(3,5));
-    
     boolean isLateFlight = false;
-
     if (selectionDorO.equals("Origin")) {
-
       isLateFlight = checkIsLate(String.valueOf(flight.expDepTime), String.valueOf(flight.depTime));
-    } 
-    else {
-
+    } else {
       isLateFlight = checkIsLate(String.valueOf(flight.expArrTime), String.valueOf(flight.arrTime));
     }
-    
     if (isLateFlight == isLate && day >= start && day <= end) {
-
       sortedFlights.add(flight);
     }
   }
-  
   return sortedFlights;
 }
 
-
-// Functions for the states and the airports
 void populateStatesListForSelection() {
-
   statesToShow.clear();
   selectedState = "";
-
-  // Clear airports list when repopulating.
   airportsToShow.clear();
   selectedAirport = "";
-  
   for (Flight flight : flights) {
-
     String state;
-
     if (selectionDorO.equals("Destination")) {
-
       state = flight.destState;
-    } 
-    else {
-
+    } else {
       state = flight.originState;
     }
-
     if (!statesToShow.contains(state)) {
-      
       statesToShow.add(state);
     }
   }
-
   statesToShow.sort(null);
 }
 
 void populateAirportsForState() {
-
   airportsToShow.clear();
   selectedAirport = "";
-  
-  // For each flight, if the flight's state matches the selected state, add the airport.
   for (Flight flight : flights) {
-
     String state;
     String airport;
-
     if (selectionDorO.equals("Destination")) {
-
       state = flight.destState;
       airport = flight.destination;
-    } 
-    else {
-
+    } else {
       state = flight.originState;
       airport = flight.origin;
     }
-
     if (state.equals(selectedState) && !airportsToShow.contains(airport)) {
-
       airportsToShow.add(airport);
     }
   }
-
   airportsToShow.sort(null);
 }
 
 // -- Dev Joshi 
 ArrayList<Flight> destFiltering(ArrayList<Flight> filteredFlightsNotDest, String selectionDorO, String selectedAirport, String selectedState) {
-
-ArrayList<Flight> array = new ArrayList<Flight>();
-
-if (selectionDorO.equals("Origin")) {
- for (int i = 0; i < filteredFlightsNotDest.size(); i++) {
-   Flight flight = filteredFlightsNotDest.get(i);
-   if (flight.origin.equals(selectedAirport) && flight.originState.equals(selectedState)) {
-     array.add(flight);
-   }
-   
- } 
- 
- 
-} else {
- 
- for (int i = 0; i < filteredFlightsNotDest.size(); i++) {
-   Flight flight = filteredFlightsNotDest.get(i);
-   if (flight.destination.equals(selectedAirport) && flight.destState.equals(selectedState)) {
-     array.add(flight);
-   }
-   
- } 
- 
-}
-
-return array;
-
-
+  ArrayList<Flight> array = new ArrayList<Flight>();
+  if (selectionDorO.equals("Origin")) {
+    for (int i = 0; i < filteredFlightsNotDest.size(); i++) {
+      Flight flight = filteredFlightsNotDest.get(i);
+      if (flight.origin.equals(selectedAirport) && flight.originState.equals(selectedState)) {
+        array.add(flight);
+      }
+    } 
+  } else {
+    for (int i = 0; i < filteredFlightsNotDest.size(); i++) {
+      Flight flight = filteredFlightsNotDest.get(i);
+      if (flight.destination.equals(selectedAirport) && flight.destState.equals(selectedState)) {
+        array.add(flight);
+      }
+    } 
+  }
+  return array;
 }
