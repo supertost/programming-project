@@ -217,7 +217,7 @@ void draw() {
     
     // ------------------------
     // NEW: Draw the Bar Chart title only when the Bar Chart view is active.
-    //       The title is moved a bit lower.
+    //       The title now displays the smaller date first and the bigger date second.
     // ------------------------
     if (chartType.equals("Bar Chart")) {
       fill(0);
@@ -233,7 +233,10 @@ void draw() {
         title = isLate ? "Late Flights from " : "On Time Flights from ";
       }
       
-      title += selectedState + ", " + selectedAirport + ": (" + startDate + "/1/2022 - "+ endDate + "/1/2022)"  ;
+      // Calculate the smaller and larger date values for display
+      int displayStart = min(startDate, endDate);
+      int displayEnd = max(startDate, endDate);
+      title += selectedState + ", " + selectedAirport + ": (" + displayStart + "/1/2022 - " + displayEnd + "/1/2022)";
       // Moved further down (e.g., y = 70) so it doesn't interfere with header menu
       text(title, SCREEN_WIDTH/2, 106);
     }
@@ -783,9 +786,7 @@ void mousePressed() {
     selectingStart = false;
     if ((!selectionDorO.equals("")) && !selectedAirport.equals("") && !selectedState.equals("") && startDate != -1 && endDate != -1) {
       
-      
       println("Search button clicked");
-      
       
       ArrayList<Flight> filteredFlights = limitedFlights(startDate, endDate, flights, isLate);
       ArrayList<Flight> filteredFlightsNotDest = limitedFlights(startDate, endDate, flights, isLate);
@@ -862,63 +863,29 @@ void showErrorSearch() {
 }
 
 
-
 // ------------------------
 // Helper Functions
 // ------------------------
-boolean checkIsLate(String expectedTime, String realTime) {
-  while (expectedTime.length() < 4) {
-    expectedTime = "0" + expectedTime;
-  }
-  while (realTime.length() < 4) {
-    realTime = "0" + realTime;
-  }
-  int expectedHour = Integer.parseInt(expectedTime.substring(0, 2));
-  int expectedMinute = Integer.parseInt(expectedTime.substring(2, 4));
-  int realHour = Integer.parseInt(realTime.substring(0, 2));
-  int realMinute = Integer.parseInt(realTime.substring(2, 4));
-  int expectedTotalMinutes = expectedHour * 60 + expectedMinute;
-  int realTotalMinutes = realHour * 60 + realMinute;
-  return realTotalMinutes > expectedTotalMinutes;
-}
 
+// Updated getRangeOfDates(): always returns the lower date first and the higher date second.
 String[] getRangeOfDates(int startDate, int endDate) {
   String[] array = new String[2];
-  String start;
-  String end;
   if(startDate <= endDate) {
-    start = String.format("01/%02d/2022 00:00", startDate);
-    end = String.format("01/%02d/2022 00:00", endDate);
-    array[0] = start;
-    array[1] = end;
+    array[0] = String.format("01/%02d/2022 00:00", startDate);
+    array[1] = String.format("01/%02d/2022 00:00", endDate);
   } else {
-    start = String.format("01/%02d/2022 00:00", endDate);
-    end = String.format("01/%02d/2022 00:00", startDate);
-    array[0] = end;
-    array[1] = start;
+    array[0] = String.format("01/%02d/2022 00:00", endDate);
+    array[1] = String.format("01/%02d/2022 00:00", startDate);
   }
   return array;
 }
 
+// Updated limitedFlights(): now simply uses the ordered dates returned by getRangeOfDates().
 ArrayList<Flight> limitedFlights(int startDateEntered, int endDateEntered, ArrayList<Flight> flights, boolean isLate) {
   ArrayList<Flight> sortedFlights = new ArrayList<Flight>();
-  String[] dates;
-  String startDateStr;
-  String endDateStr;
-  if(startDateEntered <= endDateEntered){
-    dates = getRangeOfDates(startDateEntered, endDateEntered);
-  }
-  else{
-    dates = getRangeOfDates(endDateEntered, startDateEntered);
-  }
-  if (startDateEntered >= endDateEntered){
-    startDateStr = dates[1];
-    endDateStr = dates[0];
-  }
-  else{
-    startDateStr = dates[0];
-    endDateStr = dates[1];
-  }
+  String[] dates = getRangeOfDates(startDateEntered, endDateEntered);
+  String startDateStr = dates[0];
+  String endDateStr = dates[1];
   int start = Integer.parseInt(startDateStr.substring(3,5));
   int end = Integer.parseInt(endDateStr.substring(3,5));
   for (int i = 0; i < flights.size(); i++) {
@@ -1013,4 +980,20 @@ ArrayList<Flight> destFiltering(ArrayList<Flight> filteredFlightsNotDest, String
     } 
   }
   return array;
+}
+
+boolean checkIsLate(String expectedTime, String realTime) {
+  while (expectedTime.length() < 4) {
+    expectedTime = "0" + expectedTime;
+  }
+  while (realTime.length() < 4) {
+    realTime = "0" + realTime;
+  }
+  int expectedHour = Integer.parseInt(expectedTime.substring(0, 2));
+  int expectedMinute = Integer.parseInt(expectedTime.substring(2, 4));
+  int realHour = Integer.parseInt(realTime.substring(0, 2));
+  int realMinute = Integer.parseInt(realTime.substring(2, 4));
+  int expectedTotalMinutes = expectedHour * 60 + expectedMinute;
+  int realTotalMinutes = realHour * 60 + realMinute;
+  return realTotalMinutes > expectedTotalMinutes;
 }
