@@ -1,3 +1,8 @@
+
+import processing.core.*;
+import processing.data.*;
+import java.util.*;
+
 // ------------------------
 // Global Variables
 // ------------------------
@@ -108,8 +113,12 @@ int headerMenuButtonW = 150;
 int headerMenuButtonH = 40;
 int headerMenuButtonGap = 45;
 
+// ------------------------
+// NEW: Global variable for our new LineGraph
+// ------------------------
+LineGraph lineGraph;
+
 void setup() {
-  
   size(1200, 800);
   pixelDensity(1);
   
@@ -118,7 +127,7 @@ void setup() {
   
   windowTitle("CloudCruiser");
   
-  // Loads the background image
+  // Loads the background images
   bg = loadImage("background.png");
   bg2 = loadImage("background3.png");
   
@@ -135,37 +144,41 @@ void setup() {
   
   // Reading flights to add into flights ArrayList.
   for (TableRow row : table.rows()) {
-    
     Flight flight = new Flight(
-      row.getString("FL_DATE"), row.getString("MKT_CARRIER"), row.getInt("MKT_CARRIER_FL_NUM"),
-      row.getString("ORIGIN"), row.getString("ORIGIN_CITY_NAME"), row.getString("ORIGIN_STATE_ABR"),
-      row.getString("ORIGIN_WAC"), row.getString("DEST"), row.getString("DEST_CITY_NAME"),
-      row.getString("DEST_STATE_ABR"), row.getInt("DEST_WAC"), row.getInt("CRS_DEP_TIME"),
-      row.getInt("DEP_TIME"), row.getInt("CRS_ARR_TIME"), row.getInt("ARR_TIME"),
-      row.getInt("CANCELLED") == 1, row.getInt("DIVERTED") == 1, row.getInt("DISTANCE")
+      row.getString("FL_DATE"), 
+      row.getString("MKT_CARRIER"), 
+      row.getInt("MKT_CARRIER_FL_NUM"),
+      row.getString("ORIGIN"), 
+      row.getString("ORIGIN_CITY_NAME"), 
+      row.getString("ORIGIN_STATE_ABR"),
+      row.getString("ORIGIN_WAC"), 
+      row.getString("DEST"), 
+      row.getString("DEST_CITY_NAME"),
+      row.getString("DEST_STATE_ABR"), 
+      row.getInt("DEST_WAC"), 
+      row.getInt("CRS_DEP_TIME"),
+      row.getInt("DEP_TIME"), 
+      row.getInt("CRS_ARR_TIME"), 
+      row.getInt("ARR_TIME"),
+      row.getInt("CANCELLED") == 1, 
+      row.getInt("DIVERTED") == 1, 
+      row.getInt("DISTANCE")
     );
-    
     flights.add(flight);
   }
 }
 
 void draw() {
-  
   if (currentScreen == 0) {
-    
     // Putting the search button in focus
     searchButtonY = searchY;
-    
     // Putting the back button out of focus
     backButtonY = searchY + height + 1000;
     
     // Main UI screen.
     if (bg != null) {
-      
       image(bg, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    } 
-    else {
-      
+    } else {
       background(100);
     }
     
@@ -174,51 +187,40 @@ void draw() {
     
     // Draw states popup if active
     if (showStatesPopup) {
-      
       drawStatesPopup();
     }
     
     // Draw airports popup if active
     if (showAirportsPopup) {
-      
       drawAirportsPopup();
     }
     
     // Draw calendar if active
     if (dateRangeActive) {
-      
       drawCalendar(SCREEN_WIDTH/2 - 110, SCREEN_HEIGHT/2 - 120);
     }
 
-    if (showErrorSearch == true) {
+    if (showErrorSearch) {
       showErrorSearch();
     }
     
-  } 
-  else if (currentScreen == 1) {
-
+  } else if (currentScreen == 1) {
+    // Chart screen
     if (bg2 != null) {
       image(bg2, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    }
-    else {
+    } else {
       background(240);
     }
-   
+    
     // Putting the back button in focus
     backButtonY = searchY;
-    
     // Putting the search button out of focus
     searchButtonY = searchY + height + 1000;
     
-    // ------------------------
-    // NEW: Draw the Header Menu for Chart Views with a distinct background color
-    // ------------------------
+    // Draw the Header Menu for Chart Views with a distinct background color
     drawHeaderMenu();
     
-    // ------------------------
-    // NEW: Draw the Bar Chart title only when the Bar Chart view is active.
-    //       The title now displays the smaller date first and the bigger date second.
-    // ------------------------
+    // Draw the Bar Chart title only when the Bar Chart view is active.
     if (chartType.equals("Bar Chart")) {
       fill(0);
       textFont(mono2);
@@ -228,34 +230,28 @@ void draw() {
       
       if (selectionDorO.equals("Destination")) {
         title = isLate ? "Late Flights to " : "On Time Flights to ";
-      } 
-      else if (selectionDorO.equals("Origin")) {
+      } else if (selectionDorO.equals("Origin")) {
         title = isLate ? "Late Flights from " : "On Time Flights from ";
       }
       
-      // Calculate the smaller and larger date values for display
-      int displayStart = min(startDate, endDate);
-      int displayEnd = max(startDate, endDate);
-      title += selectedState + ", " + selectedAirport + ": (" + displayStart + "/1/2022 - " + displayEnd + "/1/2022)";
-      // Moved further down (e.g., y = 70) so it doesn't interfere with header menu
+      title += selectedState + ", " + selectedAirport + ": (" + startDate + "/1/2022 - "+ endDate + "/1/2022)" ;
+      // Moved further down so it doesn't interfere with header menu
       text(title, SCREEN_WIDTH/2, 106);
     }
     
-    // ------------------------
-    // NEW: Display the selected chart view based on header menu selection
-    // ------------------------
-    if(chartType.equals("Bar Chart")) {
+    // Display the selected chart view based on header menu selection
+    if (chartType.equals("Bar Chart")) {
       if (barChart != null) {
         barChart.display();
       }
     }
-    else if(chartType.equals("Line Graph")) {
-      drawLineGraph();
+    else if (chartType.equals("Line Graph")) {
+      drawLineGraph(); 
     }
-    else if(chartType.equals("Pie Chart")) {
+    else if (chartType.equals("Pie Chart")) {
       drawPieChart();
     }
-    else if(chartType.equals("3D Map")) {
+    else if (chartType.equals("3D Map")) {
       draw3DMap();
     }
     
@@ -266,13 +262,11 @@ void draw() {
   }
 }
 
-
 // ------------------------
 // Original UI Drawing Functions
 // ------------------------
 
 void drawHeader() {
-
   noStroke();
   fill(100, 100, 255, 0); // Semi-transparent header
   rect(0, 0, SCREEN_WIDTH, HEADER_HEIGHT + 20);
@@ -292,7 +286,6 @@ void drawHeader() {
   drawDateButton(dateButtonX, dateButtonY, dateButtonW, dateButtonH);
   drawToggle(toggleX, toggleY, "Late", isLate);
   drawSearchBar(searchX, searchY, searchW, searchH, searchText);
-  
   drawSearchButton(searchButtonX, searchButtonY, searchButtonW, searchButtonH, "Search");
 }
 
@@ -341,7 +334,7 @@ void drawDateButton(int x, int y, int w, int h) {
   } else if (startDate != -1 && endDate == -1) {
     text("Start: " + startDate + " (select End Date)", x + w/2, y + h/2);
   } else {
-    if (startDate <= endDate){
+    if (startDate <= endDate) {
       text("Start: " + startDate + "   End: " + endDate, x + w/2, y + h/2);
     } else {
       text("Start: " + endDate + "   End: " + startDate, x + w/2, y + h/2);
@@ -566,7 +559,7 @@ void drawAirportsPopup() {
 }
 
 // ------------------------
-// NEW: Header Menu Drawing Function for Chart Views with distinct background color
+// NEW: Header Menu Drawing Function for Chart Views
 // ------------------------
 void drawHeaderMenu() {
   // Draw header menu background (distinct color)
@@ -602,14 +595,20 @@ void drawChartMenuButton(int x, int y, int w, int h, String label, boolean activ
 }
 
 // ------------------------
-// NEW: Stub functions for additional chart views (replace with your implementations)
+// NEW: Stub functions for additional chart views
 // ------------------------
 void drawLineGraph() {
-  fill(0);
-  textFont(mono2);
-  textSize(40);
-  textAlign(CENTER, CENTER);
-  text("Line Graph View", SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
+  // If a lineGraph object exists, display it
+  if (lineGraph != null) {
+    lineGraph.display();
+  } else {
+    // Fallback placeholder
+    fill(0);
+    textFont(mono2);
+    textSize(40);
+    textAlign(CENTER, CENTER);
+    text("Line Graph View", SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
+  }
 }
 
 void drawPieChart() {
@@ -632,7 +631,6 @@ void draw3DMap() {
 // Mouse Click Handling
 // ------------------------
 void mousePressed() {
-  
   // NEW: Header Menu click detection for chart views (active on chart screen)
   if (currentScreen == 1) {
     int x = headerMenuXStart;
@@ -768,7 +766,7 @@ void mousePressed() {
     showErrorSearch = false;
   }
   
-  // Check Toggle.
+  // Check Toggle (Late).
   if (isMouseOver(toggleX + 60, toggleY, 20, 25)) {
     isLate = !isLate;
     clickHandled = true;
@@ -784,29 +782,46 @@ void mousePressed() {
     showAirportsPopup = false;
     dateRangeActive = false;
     selectingStart = false;
-    if ((!selectionDorO.equals("")) && !selectedAirport.equals("") && !selectedState.equals("") && startDate != -1 && endDate != -1) {
+    if ((!selectionDorO.equals("")) && !selectedAirport.equals("") 
+         && !selectedState.equals("") && startDate != -1 && endDate != -1) {
       
       println("Search button clicked");
       
+      // 1) Filter flights by date range and isLate
       ArrayList<Flight> filteredFlights = limitedFlights(startDate, endDate, flights, isLate);
-      ArrayList<Flight> filteredFlightsNotDest = limitedFlights(startDate, endDate, flights, isLate);
-      ArrayList<Flight> filteredFlightsDest = destFiltering(filteredFlightsNotDest, selectionDorO, selectedAirport, selectedState);
+      
+      // 2) For the bar chart, we keep the same approach:
       barChart = new BarChart(filteredFlights);
+      
+      // 3) Build an additional subset for the line graph that matches the selected state
+      //    so we can show "airport vs frequency" for that state only.
+      ArrayList<Flight> flightsForLineGraph = new ArrayList<Flight>();
+      for (Flight f : filteredFlights) {
+        if (selectionDorO.equals("Destination") && f.destState.equals(selectedState)) {
+          flightsForLineGraph.add(f);
+        } else if (selectionDorO.equals("Origin") && f.originState.equals(selectedState)) {
+          flightsForLineGraph.add(f);
+        }
+      }
+      // Create our new line graph object:
+      lineGraph = new LineGraph(flightsForLineGraph, selectionDorO, selectedState, selectedAirport);
+      
       currentScreen = 1;
       clickHandled = true; 
-    }
-    else {
+    } else {
       showErrorSearch = true;
       showErrorSearch();
       println("Please select an origin or destination and a date");
     }
   }
-
+  
+  // If user clicks on the error popup, hide it
   if (isMouseOver(width/2 - 500, height/2 - 100, 1000, 200)) {
     showErrorSearch = false;
     println(showErrorSearch);
   }
   
+  // Check Back Button
   if (isMouseOver(backButtonX, backButtonY, backButtonW, backButtonH)) {
     // When the back button is clicked, return to the home screen.
     currentScreen = 0;
@@ -815,7 +830,8 @@ void mousePressed() {
   
   // Check Calendar area click (if active).
   if (dateRangeActive) {
-    int calX = SCREEN_WIDTH/2 - 110 - 115, calY = SCREEN_HEIGHT/2 - 120 - 120;
+    int calX = SCREEN_WIDTH/2 - 110 - 115;
+    int calY = SCREEN_HEIGHT/2 - 120 - 120;
     if (isMouseOver(calX, calY, 220, 240)) {
       showErrorSearch = false;
       int gridStartX = calX + 20;
@@ -853,41 +869,75 @@ void mousePressed() {
 }
 
 void showErrorSearch() {
-    fill(0, 100);
-    rect(width/2 - 500, height/2 - 100, 1000, 200, 20);
-    fill(255, 175);
-    rect(width/2 - 500, height/2 - 100, 1000, 200, 20);
-    textFont(mono2);
-    fill(0);
-    text("Please select an origin or a destination point and a date", width/2, height/2);
+  fill(0, 100);
+  rect(width/2 - 500, height/2 - 100, 1000, 200, 20);
+  fill(255, 175);
+  rect(width/2 - 500, height/2 - 100, 1000, 200, 20);
+  textFont(mono2);
+  fill(0);
+  text("Please select an origin or a destination point and a date", width/2, height/2);
 }
-
 
 // ------------------------
 // Helper Functions
 // ------------------------
+boolean checkIsLate(String expectedTime, String realTime) {
+  while (expectedTime.length() < 4) {
+    expectedTime = "0" + expectedTime;
+  }
+  while (realTime.length() < 4) {
+    realTime = "0" + realTime;
+  }
+  int expectedHour = Integer.parseInt(expectedTime.substring(0, 2));
+  int expectedMinute = Integer.parseInt(expectedTime.substring(2, 4));
+  int realHour = Integer.parseInt(realTime.substring(0, 2));
+  int realMinute = Integer.parseInt(realTime.substring(2, 4));
+  int expectedTotalMinutes = expectedHour * 60 + expectedMinute;
+  int realTotalMinutes = realHour * 60 + realMinute;
+  return realTotalMinutes > expectedTotalMinutes;
+}
 
-// Updated getRangeOfDates(): always returns the lower date first and the higher date second.
 String[] getRangeOfDates(int startDate, int endDate) {
   String[] array = new String[2];
-  if(startDate <= endDate) {
-    array[0] = String.format("01/%02d/2022 00:00", startDate);
-    array[1] = String.format("01/%02d/2022 00:00", endDate);
+  String start;
+  String end;
+  if (startDate <= endDate) {
+    start = String.format("01/%02d/2022 00:00", startDate);
+    end = String.format("01/%02d/2022 00:00", endDate);
+    array[0] = start;
+    array[1] = end;
   } else {
-    array[0] = String.format("01/%02d/2022 00:00", endDate);
-    array[1] = String.format("01/%02d/2022 00:00", startDate);
+    start = String.format("01/%02d/2022 00:00", endDate);
+    end = String.format("01/%02d/2022 00:00", startDate);
+    array[0] = end;
+    array[1] = start;
   }
   return array;
 }
 
-// Updated limitedFlights(): now simply uses the ordered dates returned by getRangeOfDates().
-ArrayList<Flight> limitedFlights(int startDateEntered, int endDateEntered, ArrayList<Flight> flights, boolean isLate) {
+  ArrayList<Flight> limitedFlights(int startDateEntered, int endDateEntered, ArrayList<Flight> flights, boolean isLate) {
   ArrayList<Flight> sortedFlights = new ArrayList<Flight>();
-  String[] dates = getRangeOfDates(startDateEntered, endDateEntered);
-  String startDateStr = dates[0];
-  String endDateStr = dates[1];
+  String[] dates;
+  String startDateStr;
+  String endDateStr;
+  
+  if (startDateEntered <= endDateEntered) {
+    dates = getRangeOfDates(startDateEntered, endDateEntered);
+  } else {
+    dates = getRangeOfDates(endDateEntered, startDateEntered);
+  }
+  
+  if (startDateEntered >= endDateEntered) {
+    startDateStr = dates[1];
+    endDateStr = dates[0];
+  } else {
+    startDateStr = dates[0];
+    endDateStr = dates[1];
+  }
+  
   int start = Integer.parseInt(startDateStr.substring(3,5));
   int end = Integer.parseInt(endDateStr.substring(3,5));
+  
   for (int i = 0; i < flights.size(); i++) {
     Flight flight = flights.get(i);
     String date = flight.date;
@@ -909,12 +959,16 @@ ArrayList<Flight> limitedFlights(int startDateEntered, int endDateEntered, Array
       date = datePart;
     }
     int day = Integer.parseInt(date.substring(3,5));
-    boolean isLateFlight = false;
+    
+    // Check if flight is late or on time
+    boolean isLateFlight;
     if (selectionDorO.equals("Origin")) {
       isLateFlight = checkIsLate(String.valueOf(flight.expDepTime), String.valueOf(flight.depTime));
     } else {
       isLateFlight = checkIsLate(String.valueOf(flight.expArrTime), String.valueOf(flight.arrTime));
     }
+    
+    // Compare isLateFlight to isLate, also check if day is in range
     if (isLateFlight == isLate && day >= start && day <= end) {
       sortedFlights.add(flight);
     }
@@ -927,6 +981,7 @@ void populateStatesListForSelection() {
   selectedState = "";
   airportsToShow.clear();
   selectedAirport = "";
+  
   for (Flight flight : flights) {
     String state;
     if (selectionDorO.equals("Destination")) {
@@ -944,6 +999,7 @@ void populateStatesListForSelection() {
 void populateAirportsForState() {
   airportsToShow.clear();
   selectedAirport = "";
+  
   for (Flight flight : flights) {
     String state;
     String airport;
@@ -980,20 +1036,4 @@ ArrayList<Flight> destFiltering(ArrayList<Flight> filteredFlightsNotDest, String
     } 
   }
   return array;
-}
-
-boolean checkIsLate(String expectedTime, String realTime) {
-  while (expectedTime.length() < 4) {
-    expectedTime = "0" + expectedTime;
-  }
-  while (realTime.length() < 4) {
-    realTime = "0" + realTime;
-  }
-  int expectedHour = Integer.parseInt(expectedTime.substring(0, 2));
-  int expectedMinute = Integer.parseInt(expectedTime.substring(2, 4));
-  int realHour = Integer.parseInt(realTime.substring(0, 2));
-  int realMinute = Integer.parseInt(realTime.substring(2, 4));
-  int expectedTotalMinutes = expectedHour * 60 + expectedMinute;
-  int realTotalMinutes = realHour * 60 + realMinute;
-  return realTotalMinutes > expectedTotalMinutes;
 }
