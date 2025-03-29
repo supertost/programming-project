@@ -595,13 +595,18 @@ void drawChartMenuButton(int x, int y, int w, int h, String label, boolean activ
 }
 
 void drawLineGraph() {
-  fill(0);
-  textFont(mono2);
-  textSize(40);
-  textAlign(CENTER, CENTER);
-  text("Line Graph View", SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
+  // If a lineGraph object exists, display it
+  if (lineGraph != null) {
+    lineGraph.display();
+  } else {
+    // Fallback placeholder
+    fill(0);
+    textFont(mono2);
+    textSize(40);
+    textAlign(CENTER, CENTER);
+    text("Line Graph View", SCREEN_WIDTH/2, SCREEN_HEIGHT/2);
+  }
 }
-
 void draw3DMap() {
   fill(0);
   textFont(mono2);
