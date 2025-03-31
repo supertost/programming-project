@@ -566,7 +566,7 @@ void drawAirportsPopup() {
 void drawHeaderMenu() {
   // Draw header menu background (distinct color)
   noStroke();
-  fill(10, 52, 99); // New background color for header menu
+  fill(255, 200); // New background color for header menu
   rect(0, 0, SCREEN_WIDTH, headerMenuButtonH + 20);
  
   int x = headerMenuXStart;
