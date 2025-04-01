@@ -188,6 +188,8 @@ void setup() {
 void draw() {
   if (currentScreen == 0) {
     // Main UI screen.
+    dateButtonY = destY;
+    
     searchButtonY = searchY;
     backButtonY = searchY + height + 1000;
     if (bg != null) { image(bg, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT); }
@@ -199,6 +201,8 @@ void draw() {
     if (showErrorSearch == true) { showErrorSearch(); }
   }
   else if (currentScreen == 1) {
+    dateButtonY = destY + height;
+    
     if (bg2 != null) { image(bg2, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT); }
     else { background(240); }
     backButtonY = searchY;
@@ -525,7 +529,7 @@ void drawStatesPopup() {
 void drawAirportsPopup() {
   noStroke();
   fill(255, 240);
-  rect(airportPopupX, airportPopupY, airportPopupW, airportPopupH, 10);
+  rect(airportPopupX, airportPopupY, airportPopupW, airportPopupH + 50, 10);
   fill(175, 100);
   rect(airportPopupX + airportPopupW - 25, airportPopupY + 5, 20, 20, 5);
   fill(0);
@@ -826,14 +830,14 @@ void mousePressed() {
     colourValueButtonDestR = 255; colourValueButtonDestG = 255; colourValueButtonDestB = 255;
     populateStatesListForSelection();
     showStatesPopup = true; showAirportsPopup = false;
-    clickHandled = true; dateRangeActive = false; selectingStart = false; showErrorSearch = false;
+    clickHandled = true; dateRangeActive = false; selectingStart = false;
   }
  
   if (isMouseOver(toggleX + 60, toggleY, 20, 25)) { isLate = !isLate; clickHandled = true; }
   if (isMouseOver(toggleX + 80, toggleY, 20, 25)) { isLate = !isLate; clickHandled = true; }
  
   if (isMouseOver(searchButtonX, searchButtonY, searchButtonW, searchButtonH)) {
-    showStatesPopup = false; showAirportsPopup = false; dateRangeActive = false; selectingStart = false;
+    showStatesPopup = false; showAirportsPopup = false; dateRangeActive = false; selectingStart = false; searchActive = false;
     if ((!selectionDorO.equals("")) && !selectedAirport.equals("") && !selectedState.equals("") && startDate != -1 && endDate != -1) {
       println("Search button clicked");
       ArrayList<Flight> filteredFlights = limitedFlights(startDate, endDate, flights, isLate);
