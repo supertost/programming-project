@@ -1,6 +1,5 @@
-// ------------------------
+
 // Global Variables
-// ------------------------
 import processing.core.*;
 import processing.data.*;
 import java.util.*;
@@ -9,6 +8,8 @@ import gifAnimation.*;
 // constant window dimensions
 PImage bg;
 PImage bg2;
+PImage bg3;
+
 final int SCREEN_WIDTH = 1200;
 final int SCREEN_HEIGHT = 800;
 final int HEADER_HEIGHT = 150;
@@ -71,9 +72,8 @@ ArrayList<Flight> flights;
 // NEW: Global variable to store filtered flights for 3D Map view.
 ArrayList<Flight> filteredFlightsForMap;
 
-// ------------------------
+
 // Global Variables for States Popup
-// ------------------------
 boolean showStatesPopup = false;
 ArrayList<String> statesToShow = new ArrayList<String>();
 String selectedState = ""; // holds the state abbreviation selected by the user
@@ -84,9 +84,8 @@ int popupY = destY + buttonH + 10;
 int popupW = 300;  // width of states popup
 int popupH = 600;  // height of states popup
 
-// ------------------------
+
 // Global Variables for Airports Popup
-// ------------------------
 boolean showAirportsPopup = false;
 ArrayList<String> airportsToShow = new ArrayList<String>();
 String selectedAirport = ""; // holds the chosen airport
@@ -97,18 +96,15 @@ int airportPopupY = popupY;
 int airportPopupW = 300;
 int airportPopupH = 400;
 
-// ------------------------
 // Global Variables for Bar Chart
-// ------------------------
 BarChart barChart;
 
-// ------------------------
-// NEW Global Variable for Pie Chart Data (for the pie chart view)
+
+// Global Variable for Pie Chart Data (for the pie chart view)
 ArrayList<Flight> pieChartFlights;
 
-// ------------------------
-// NEW Global Variables for Header Menu (Chart Views)
-// ------------------------
+
+// Global Variables for Header Menu (Chart Views)
 String chartType = "Bar Chart"; // default view after search
 
 // Header Menu Button positions and dimensions
@@ -120,9 +116,8 @@ int headerMenuButtonGap = 45;
 
 LineGraph lineGraph;
 
-// ==================================================
-// NEW Global Variables for 3D Map Integration
-// ==================================================
+
+// Global Variables for Map Integration
 PShape usMap;                // The complete SVG map
 ArrayList<PShape> mapStates; // List of individual state shapes
 
@@ -137,6 +132,22 @@ int totalFilteredFlights = 0;
 // LoadingScreen initiation
 
 LoadingScreen loadingScreen;
+
+
+
+int menuWidth = 250; // Width of the menu
+int menuX; // X position of the menu
+int targetX; // Target X position for animation
+boolean menuOpen = false;
+int iconSize = 40;
+int iconX, iconY;
+float easing = 0.1; // Speed of the animation
+String[] menuItems = {"Main Page", "Fun Facts", "About", "Contact"};
+int menuItemHeight = 50;
+//int currentScreen = 0; // 0, 1, 2, 3 already taken, new screens will be 4, 5, 6, 7
+
+
+
 
 // --------------------------------------------------
 // Loads the SVG map and initializes the state shapes.
@@ -176,12 +187,19 @@ void setup() {
 
   // Start loading data sumiltaneously
   thread("loadData");
+  
+  
+  menuX = width; // Start off-screen
+  targetX = width;
+  iconX = width - iconSize - 20;
+  iconY = 20 + 20;
 }
 
 void loadData() {
   // Loads the background images
   bg = loadImage("background.png");
-  bg2 = loadImage("background3.png");
+  bg2 = loadImage("background-test.png");
+  bg3 = loadImage("background4-differentMenu.png");
 
   flights = new ArrayList<Flight>();
 
@@ -225,8 +243,12 @@ void draw() {
     if (showAirportsPopup) { drawAirportsPopup(); }
     if (dateRangeActive) { drawCalendar(SCREEN_WIDTH/2 - 110, SCREEN_HEIGHT/2 - 120); }
     if (showErrorSearch == true) { showErrorSearch(); }
+    
+    drawHamburgerIcon();
+    updateMenu();
+    drawMenu();
   }
-  else if (currentScreen == 1) {
+  if (currentScreen == 1) {
     dateButtonY = destY + height;
     
     if (bg2 != null) { image(bg2, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT); }
@@ -370,6 +392,40 @@ void draw() {
     drawBackButton(backButtonX, backButtonY, backButtonW, backButtonH);
     drawHeaderMenu();
   }
+  
+  
+  
+  if (currentScreen == 4) {
+        
+    dateButtonY = destY + height;
+    
+    backButtonY = searchY;
+    searchButtonY = searchY + height + 1000;
+    
+    drawFunFacts();
+  }
+  
+  if (currentScreen == 5) {
+        
+    dateButtonY = destY + height;
+    
+    backButtonY = searchY;
+    searchButtonY = searchY + height + 1000;
+    
+    drawAbout();
+  }
+  
+  if (currentScreen == 6) {
+        
+    dateButtonY = destY + height;
+    
+    backButtonY = searchY;
+    searchButtonY = searchY + height + 1000;
+    
+    drawContact();
+  }
+  
+  
 }
 }
 
@@ -594,7 +650,7 @@ void drawAirportsPopup() {
 
 void drawHeaderMenu() {
   noStroke();
-  fill(255, 200);
+  fill(255, 0);
   rect(0, 0, SCREEN_WIDTH, headerMenuButtonH + 20);
   int x = headerMenuXStart;
   textFont(mono2);
@@ -689,13 +745,12 @@ void draw3DMap() {
     }
   }
  
-  // >>> Modified: For the frequency panel, show the total flights from the complete dataset.
+
   drawFrequencyPanel(flights.size());
 }
 
-// ------------------------
-// NEW: Adjusted point-in-polygon test using an offset for the Y coordinate.
-// ------------------------
+
+// Adjusted point-in-polygon test using an offset for the Y coordinate.
 boolean isMouseInShapeAdjusted(PShape s, int offsetY) {
   int n = s.getVertexCount();
   if (n == 0) return false;
@@ -712,9 +767,8 @@ boolean isMouseInShapeAdjusted(PShape s, int offsetY) {
   return inside;
 }
 
-// ------------------------
-// NEW: Draws the state info popup at a fixed position (top left) with increased size.
-// ------------------------
+
+// Draws the state info popup at a fixed position (top left) with increased size.
 void drawStateInfoPopup(String stateName, int flightCount, int airportCount) {
   pushStyle();
   int popupX = 20;
@@ -742,12 +796,11 @@ void drawStateInfoPopup(String stateName, int flightCount, int airportCount) {
   popStyle();
 }
 
-// ------------------------
-// NEW: Draws a frequency panel showing total flights, repositioned to the bottom right and made larger.
-// ------------------------
+
+// Draws a frequency panel showing total flights, repositioned to the bottom right and made larger.
 void drawFrequencyPanel(int flightCount) {
   pushStyle();
-  // >>> Modified: Position at bottom right and enlarge the panel.
+
   int panelW = 280;
   int panelH = 80;
   int panelX = SCREEN_WIDTH - panelW - 20;
@@ -764,9 +817,8 @@ void drawFrequencyPanel(int flightCount) {
   popStyle();
 }
 
-// ------------------------
+
 // Mouse Click Handling
-// ------------------------
 void mousePressed() {
   if (currentScreen == 1) {
     int x = headerMenuXStart;
@@ -927,6 +979,32 @@ void mousePressed() {
   }
  
   if (!clickHandled) { dateRangeActive = false; searchActive = false; }
+  
+  
+
+    if (mouseX > iconX && mouseX < iconX + iconSize && 
+        mouseY > iconY && mouseY < iconY + iconSize) {
+        toggleMenu();
+    } else if (menuOpen) {
+        if (mouseX > menuX && mouseX < menuX + menuWidth) {
+            if (mouseY > 100 && mouseY < 150) {
+                currentScreen = 0;
+            } else if (mouseY > 150 && mouseY < 200) {
+                currentScreen = 4;
+            } else if (mouseY > 200 && mouseY < 250) {
+                currentScreen = 5;
+            } else if (mouseY > 250 && mouseY < 300) {
+                currentScreen = 6;
+            }
+            toggleMenu();
+            return;
+        } else {
+            toggleMenu();
+        }
+    }
+
+
+
 }
 
 void showErrorSearch() {
@@ -1065,3 +1143,100 @@ ArrayList<Flight> destFiltering(ArrayList<Flight> filteredFlightsNotDest, String
   }
   return array;
 }
+
+
+
+
+
+
+
+
+void drawHamburgerIcon() {
+    fill(255);
+    rect(iconX, iconY, iconSize, 6, 255);
+    rect(iconX, iconY + 12, iconSize, 6, 255);
+    rect(iconX, iconY + 24, iconSize, 6, 255);
+}
+
+void drawMenu() {
+    fill(255, 255, 255, 240); // White with transparency
+    rect(menuX, 0, menuWidth, height);
+    
+    fill(0);
+    textSize(24);
+    textFont(mono);
+    textAlign(CENTER, TOP);
+    for (int i = 0; i < menuItems.length; i++) {
+        text(menuItems[i], menuX + 20 + 100, 100 + i * menuItemHeight);
+    }
+}
+
+void updateMenu() {
+    menuX += (targetX - menuX) * easing;
+}
+
+void toggleMenu() {
+    if (menuOpen) {
+        targetX = width + 50;
+    } else {
+        targetX = width - menuWidth;
+    }
+    menuOpen = !menuOpen;
+}
+
+class FunFacts {
+    void display() {
+      
+        if (bg2 != null) { image(bg3, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT); }
+        else { background(240); }
+        
+        fill(255);
+        textFont(mono2);
+        textSize(60);
+        textAlign(LEFT, TOP);
+        text("Fun Facts", 40, 40);
+        
+        drawHamburgerIcon();
+        updateMenu();
+        drawMenu();
+    }
+}
+
+class About {
+    void display() {
+      
+        if (bg2 != null) { image(bg3, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT); }
+        else { background(240); }
+        
+        fill(255);
+        textFont(mono2);
+        textSize(60);
+        textAlign(LEFT, TOP);
+        text("About", 40, 40);
+        
+        drawHamburgerIcon();
+        updateMenu();
+        drawMenu();
+    }
+}
+
+class Contact {
+    void display() {
+        if (bg2 != null) { image(bg3, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT); }
+        else { background(240); }
+        
+        fill(255);
+        textFont(mono2);
+        textSize(60);
+        textAlign(LEFT, TOP);
+        text("Contact", 40, 40);
+        
+        drawHamburgerIcon();
+        updateMenu();
+        drawMenu();
+    }
+}
+
+void drawFunFacts() { new FunFacts().display(); }
+void drawAbout() { new About().display(); }
+void drawContact() { new Contact().display(); }
