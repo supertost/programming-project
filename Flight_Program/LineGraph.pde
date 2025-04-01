@@ -100,7 +100,7 @@ class LineGraph {
       float yTick = topMargin + verticalPaddingFraction * graphHeight + 
                     (1 - i / (float)numYTicks) * (graphHeight * (1 - 2 * verticalPaddingFraction));
       stroke(200);
-      line(leftMargin - 5, yTick, leftMargin, yTick);
+      line(leftMargin - 5, yTick, 1130, yTick);
       noStroke();
       fill(0);
       textAlign(RIGHT, CENTER);
@@ -160,7 +160,6 @@ class LineGraph {
       // Check if mouse is close to the point
       if (dist(mouseX, mouseY, x, y) < 10) {
         fill(255);
-        //rect(x + 10, y - 20, 40, 20); // Tooltip background
         fill(0);
         textSize(18);
         textAlign(LEFT, CENTER);
