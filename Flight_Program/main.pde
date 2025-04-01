@@ -4,6 +4,7 @@
 import processing.core.*;
 import processing.data.*;
 import java.util.*;
+import gifAnimation.*;
 
 // constant window dimensions
 PImage bg;
@@ -133,6 +134,10 @@ int statePopupYOffset = 80;
 // NEW: Global variable to store total filtered flights across all states.
 int totalFilteredFlights = 0;
 
+// LoadingScreen initiation
+
+LoadingScreen loadingScreen;
+
 // --------------------------------------------------
 // Loads the SVG map and initializes the state shapes.
 // --------------------------------------------------
@@ -149,6 +154,8 @@ void setupMap() {
   }
 }
 
+boolean loadingComplete = false; // Track if loading is done
+
 void setup() {
   size(1200, 800);
   pixelDensity(1);
@@ -156,14 +163,25 @@ void setup() {
   smooth();
   windowTitle("CloudCruiser");
 
-  // Loads the background images
-  bg = loadImage("background.png");
-  bg2 = loadImage("background3.png");
-
   // Load fonts
   mono = createFont("Fonts/Helvetica.ttf", 30);
   textFont(mono);
   mono2 = createFont("Fonts/Helvetica-Bold.ttf", 30);
+
+  // Loading screen image
+  //img = loadImage("images.jpg");
+  myAnimation = new Gif(this, "giphy.gif");
+  myAnimation.play();
+  loadingScreen = new LoadingScreen(true);
+
+  // Start loading data sumiltaneously
+  thread("loadData");
+}
+
+void loadData() {
+  // Loads the background images
+  bg = loadImage("background.png");
+  bg2 = loadImage("background3.png");
 
   flights = new ArrayList<Flight>();
 
@@ -180,12 +198,20 @@ void setup() {
     );
     flights.add(flight);
   }
- 
+
   // Initialize the map for the 3D Map view.
   setupMap();
+
+  // Mark loading as complete
+  loadingComplete = true;
 }
 
 void draw() {
+  if (!loadingComplete) {
+    background(0);
+    loadingScreen.draw();
+  } else {
+    background(255); 
   if (currentScreen == 0) {
     // Main UI screen.
     dateButtonY = destY;
@@ -344,6 +370,7 @@ void draw() {
     drawBackButton(backButtonX, backButtonY, backButtonW, backButtonH);
     drawHeaderMenu();
   }
+}
 }
 
 // ------------------------
