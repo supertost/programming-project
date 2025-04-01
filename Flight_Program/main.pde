@@ -223,8 +223,23 @@ void draw() {
       }
     }
     else if(chartType.equals("Line Graph")) {
+        
       drawLineGraph();
       lineGraph.display();
+      
+      
+        fill(0);
+        textFont(mono2);
+        textSize(32);
+        textAlign(CENTER, TOP);
+        String title = "";
+        if (selectionDorO.equals("Destination")) {
+          title = isLate ? "Late Flights per airport in " : "On Time Flights per airport in ";
+        } else if (selectionDorO.equals("Origin")) {
+          title = isLate ? "Late Flights from " : "On Time Flights from ";
+        }
+        title += selectedState + ": (" + startDate + "/1/2022 - " + endDate + "/1/2022)" ;
+        text(title, SCREEN_WIDTH/2, 106);
     }
     else if(chartType.equals("Pie Chart")) {
       // Original Pie Chart functionality remains unchanged.
@@ -548,7 +563,7 @@ void drawAirportsPopup() {
 
 void drawHeaderMenu() {
   noStroke();
-  fill(10, 52, 99);
+  fill(255, 200);
   rect(0, 0, SCREEN_WIDTH, headerMenuButtonH + 20);
   int x = headerMenuXStart;
   textFont(mono2);
@@ -588,7 +603,7 @@ void drawLineGraph() {
 // NEW: Modified draw3DMap() to show complete flight counts per state.
 // ------------------------
 void draw3DMap() {
-  background(240);
+  if (bg2 != null) { image(bg2, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT); }
  
   // >>> Modified: Draw a title at a new vertical position above the shifted map.
   String mapTitle = "";
