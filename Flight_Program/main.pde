@@ -152,7 +152,7 @@ String[] menuItems = {"Main Page", "Fun Facts", "About", "Contact"};
 int menuItemHeight = 50;
 //int currentScreen = 0; // 0, 1, 2, 3 already taken, new screens will be 4, 5, 6, 7
 
-
+ArrayList<String> facts;
 
 
 // --------------------------------------------------
@@ -211,6 +211,8 @@ void setup() {
     }
   }
 
+
+  facts = new ArrayList<>(getRandomFunFacts(funFacts));
   
   
 }
@@ -1363,26 +1365,6 @@ void toggleMenu() {
   menuOpen = !menuOpen;
 }
 
-class FunFacts {
-  void display() {
-
-    if (bg2 != null) {
-      image(bg3, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    } else {
-      background(240);
-    }
-
-    fill(255);
-    textFont(mono2);
-    textSize(60);
-    textAlign(LEFT, TOP);
-    text("Fun Facts", 40, 40);
-
-    drawHamburgerIcon();
-    updateMenu();
-    drawMenu();
-  }
-}
 
 // Returns an ArrayList containing 4 unique random fun facts from allFacts.
 ArrayList<String> getRandomFunFacts(ArrayList<String> allFacts) {
@@ -1408,6 +1390,42 @@ ArrayList<String> getRandomFunFacts(ArrayList<String> allFacts) {
   
   return selected;
 }
+
+class FunFacts {
+  void display() {
+
+    if (bg2 != null) {
+      image(bg3, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+    } else {
+      background(240);
+    }
+
+    fill(255);
+    textFont(mono2);
+    textSize(60);
+    textAlign(LEFT, TOP);
+    text("Fun Facts", 40, 40);
+    
+    //ArrayList<String> facts = new ArrayList<>(getRandomFunFacts(funFacts));
+    
+    int textHeight = 150;
+    
+    for (int i = 0; i < facts.size(); i++) {
+      textFont(mono);
+      fill(0);
+      
+      text(facts.get(i), 30, textHeight, 1100, 1000);
+      
+      textHeight += 100;
+    }
+
+    drawHamburgerIcon();
+    updateMenu();
+    drawMenu();
+  }
+}
+
+
 
 
 class About {
