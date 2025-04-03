@@ -4,6 +4,7 @@ import processing.core.*;
 import processing.data.*;
 import java.util.*;
 import gifAnimation.*;
+import java.io.*;
 
 // constant window dimensions
 PImage bg;
@@ -103,6 +104,8 @@ BarChart barChart;
 // Global Variable for Pie Chart Data (for the pie chart view)
 ArrayList<Flight> pieChartFlights;
 
+ArrayList<String> funFacts;
+
 
 // Global Variables for Header Menu (Chart Views)
 String chartType = "Bar Chart"; // default view after search
@@ -193,6 +196,20 @@ void setup() {
   targetX = width;
   iconX = width - iconSize - 20;
   iconY = 20 + 20;
+  
+  funFacts = new ArrayList<String>();
+  
+  // Load the file from the "data" folder
+  String[] lines = loadStrings("US_Main_Airports_Fun_Facts.csv");
+  
+  if (lines != null) {
+    for (String line : lines) {
+      funFacts.add(line);
+    }
+  }
+
+  
+  
 }
 
 void loadData() {
