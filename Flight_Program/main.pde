@@ -416,7 +416,7 @@ void draw() {
         rect(legendX, legendY + legendSpacing, 15, 15);
         fill(0);
         text("Not Diverted (" + nonDivertedCount + ")", legendX + 20, legendY + legendSpacing + 7);
-      } else if (chartType.equals("3D Map")) {
+      } else if (chartType.equals("US Map")) {
         // ------------------------
         // NEW: Draws the 3D map with complete flight data.
         // ------------------------
@@ -734,7 +734,7 @@ void drawHeaderMenu() {
   drawChartMenuButton(x, headerMenuY, headerMenuButtonW, headerMenuButtonH, "Pie Chart", chartType.equals("Pie Chart"));
   x += headerMenuButtonW + headerMenuButtonGap;
   // >>> Modified: For 3D Map, reset filteredFlightsForMap to flights.
-  drawChartMenuButton(x, headerMenuY, headerMenuButtonW, headerMenuButtonH, "3D Map", chartType.equals("3D Map"));
+  drawChartMenuButton(x, headerMenuY, headerMenuButtonW, headerMenuButtonH, "US Map", chartType.equals("US Map"));
 }
 
 void drawChartMenuButton(int x, int y, int w, int h, String label, boolean active) {
@@ -777,7 +777,7 @@ void draw3DMap() {
   } else if (selectionDorO.equals("Origin")) {
     mapTitle = ("Information about all flights per state");
   } else {
-    mapTitle = "3D Map View";
+    mapTitle = "US Map View";
   }
   fill(0);
   textFont(mono2);
@@ -919,7 +919,7 @@ void mousePressed() {
     x += headerMenuButtonW + headerMenuButtonGap;
     // >>> Modified: For 3D Map, reset filteredFlightsForMap to the complete flights dataset.
     if (isMouseOver(x, headerMenuY, headerMenuButtonW, headerMenuButtonH)) {
-      chartType = "3D Map";
+      chartType = "US Map";
       filteredFlightsForMap = flights;
       return;
     }
