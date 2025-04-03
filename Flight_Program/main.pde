@@ -1384,6 +1384,32 @@ class FunFacts {
   }
 }
 
+// Returns an ArrayList containing 4 unique random fun facts from allFacts.
+ArrayList<String> getRandomFunFacts(ArrayList<String> allFacts) {
+  ArrayList<String> selected = new ArrayList<String>();
+  
+  // If there are fewer than 4 facts, return them all.
+  if (allFacts.size() <= 4) {
+    selected.addAll(allFacts);
+    return selected;
+  }
+  
+  // Create a list to track which indices have already been used.
+  ArrayList<Integer> usedIndices = new ArrayList<Integer>();
+  
+  // Pick 4 unique random facts.
+  while (selected.size() < 4) {
+    int randomIndex = int(random(allFacts.size()));
+    if (!usedIndices.contains(randomIndex)) {
+      usedIndices.add(randomIndex);
+      selected.add(allFacts.get(randomIndex));
+    }
+  }
+  
+  return selected;
+}
+
+
 class About {
   void display() {
 
