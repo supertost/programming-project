@@ -1326,12 +1326,6 @@ ArrayList<Flight> destFiltering(ArrayList<Flight> filteredFlightsNotDest, String
 }
 
 
-
-
-
-
-
-
 void drawHamburgerIcon() {
   fill(255);
   rect(iconX, iconY, iconSize, 6, 255);
@@ -1389,96 +1383,6 @@ ArrayList<String> getRandomFunFacts(ArrayList<String> allFacts) {
   }
   
   return selected;
-}
-
-class FunFacts {
-  void display() {
-
-    if (bg2 != null) {
-      image(bg3, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    } else {
-      background(240);
-    }
-
-    fill(255);
-    textFont(mono2);
-    textSize(60);
-    textAlign(LEFT, TOP);
-    text("Fun Facts", 40, 40);
-    
-    //ArrayList<String> facts = new ArrayList<>(getRandomFunFacts(funFacts));
-    
-    int textHeight = 150;
-    
-    for (int i = 0; i < facts.size(); i++) {
-      textFont(mono);
-      fill(0);
-      
-      text(facts.get(i), 30, textHeight, 1100, 1000);
-      
-      textHeight += 100;
-    }
-
-    drawHamburgerIcon();
-    updateMenu();
-    drawMenu();
-  }
-}
-
-
-
-
-class About {
-  void display() {
-
-    if (bg2 != null) {
-      image(bg3, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    } else {
-      background(240);
-    }
-
-    fill(255);
-    textFont(mono2);
-    textSize(60);
-    textAlign(LEFT, TOP);
-    text("About", 40, 40);
-    
-    textFont(mono);
-    textSize(25);
-    fill(0);
-    //text("ClousCruiser is a desktop app written in Java Processing, it aims to present flight data in the US between 1st of January 2022 to 31st of January 2022\n to the user in a user-friendly manner by using barcharts, line charts, world maps, and pie charts.\nThere are four different filtration system which are: Destination, Origin, Date, and Late toggle.", 20, 200);
-
-    image(about, 10, 120, 960, 639.9999996);
-    
-    drawHamburgerIcon();
-    updateMenu();
-    drawMenu();
-  }
-}
-
-class Contact {
-  void display() {
-    if (bg2 != null) {
-      image(bg3, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    } else {
-      background(240);
-    }
-
-    fill(255);
-    textFont(mono2);
-    textSize(60);
-    textAlign(LEFT, TOP);
-    text("Contact", 40, 40);
-    
-    image(contact, 10, 120, 800, 533.333333);
-    //image(customer, 400, 120, 800, 533.333333);
-
-    drawHamburgerIcon();
-    updateMenu();
-    drawMenu();
-
-
-  }
 }
 
 void drawFunFacts() {
