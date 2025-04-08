@@ -19,6 +19,11 @@ PImage bg2;
 PImage bg3;
 PImage contact;
 PImage about;
+PImage screenshots;
+PImage airport1;
+PImage airport2;
+PImage airport3;
+PImage pc;
 //PImage customer;
 
 final int SCREEN_WIDTH = 1200;
@@ -218,7 +223,13 @@ void loadData() {
   bg3 = loadImage("background4-differentMenu.png");
   contact = loadImage("emailPhone.png");
   //customer = loadImage("customerService.jpg");
-  about = loadImage("about.png");
+  about = loadImage("processinglogo.png");
+  screenshots = loadImage("screenshots.png");
+  
+  airport1 = loadImage("LGApng.png");
+  airport2 = loadImage("jfk.png");
+  
+  pc = loadImage("pc.png");
 
   flights = new ArrayList<Flight>();
 

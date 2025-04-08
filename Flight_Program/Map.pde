@@ -116,8 +116,8 @@ void drawStateInfoPopup(String stateName, int flightCount, int airportCount) {
   float lineHeight = textAscent() + textDescent() + 6;
   float popupH = lineHeight * 3 + 2 * padding;
   fill(255, 230);
-  stroke(0);
-  rect(popupX, popupY, popupW, popupH, 5);
+  noStroke();
+  rect(popupX, popupY, popupW, popupH, 30);
   fill(0);
   noStroke();
   textAlign(LEFT, TOP);
@@ -137,8 +137,8 @@ void drawFrequencyPanel(int flightCount) {
   int panelX = SCREEN_WIDTH - panelW - 20;
   int panelY = SCREEN_HEIGHT - panelH - 20;
   fill(255, 230);
-  stroke(0);
-  rect(panelX, panelY, panelW, panelH, 10);
+  noStroke();
+  rect(panelX, panelY, panelW, panelH, 20);
   fill(0);
   noStroke();
   textAlign(LEFT, CENTER);

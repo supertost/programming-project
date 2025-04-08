@@ -12,8 +12,19 @@ class Contact {
     textAlign(LEFT, TOP);
     text("Contact", 40, 40);
     
-    image(contact, 10, 120, 800, 533.333333);
+    image(contact, 20, 120 + 100, 800, 533.333333);
     //image(customer, 400, 120, 800, 533.333333);
+    
+    fill(0);
+    textSize(50);
+    text("How Can We Help?", 65, 150);
+    
+    
+    textFont(mono2);
+    textSize(30);
+    text("Shoot us an e-mail", 65, 200);
+    
+    image(pc, width - 600, 230, 400, 300);
 
     drawHamburgerIcon();
     updateMenu();

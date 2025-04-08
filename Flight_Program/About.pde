@@ -11,14 +11,15 @@ class About {
     textFont(mono2);
     textSize(60);
     textAlign(LEFT, TOP);
-    text("About", 40, 40);
+    text("What is CloudCruiser?", 40, 40);
     
     textFont(mono);
-    textSize(25);
+    textSize(30);
     fill(0);
-    //text("ClousCruiser is a desktop app written in Java Processing, it aims to present flight data in the US between 1st of January 2022 to 31st of January 2022\n to the user in a user-friendly manner by using barcharts, line charts, world maps, and pie charts.\nThere are four different filtration system which are: Destination, Origin, Date, and Late toggle.", 20, 200);
+    text("CloudCruiser is an interactive desktop application developed in Java Processing by a talented team of six based in Dublin. It aims to present flight data in the US from January 1st, 2022, to January 31st, 2022, in a user-friendly manner using bar charts, line charts, world maps, and pie charts.\n\nCloudCruiser offers four powerful filtering systems: Destination, Origin, Date, and a Late toggle, which allows users to highlight delayed flights. These filters can be combined to gain deeper insights into specific travel trends, patterns of delay, and airport activity during the selected time frame.", 65, 170, 600, 1000);
 
-    image(about, 10, 120, 960, 639.9999996);
+    image(about, width - 400, 170, 200, 200);
+    image(screenshots, width - 450, 400, 350, 350);
     
     drawHamburgerIcon();
     updateMenu();

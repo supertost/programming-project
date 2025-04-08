@@ -15,15 +15,20 @@ class FunFacts {
     
     //ArrayList<String> facts = new ArrayList<>(getRandomFunFacts(funFacts));
     
-    int textHeight = 150;
+    int textHeight = 175;
     
     for (int i = 0; i < facts.size(); i++) {
       textFont(mono);
       fill(0);
       
-      text(facts.get(i), 30, textHeight, 1100, 1000);
+      text(facts.get(i), 65, textHeight, 600, 1000);
       
-      textHeight += 100;
+      image(airport1, width - 400, 170, 300, 200);
+      
+      image(airport2, width - 400, 440, 300, 200);
+      
+      
+      textHeight += 150;
     }
 
     drawHamburgerIcon();
