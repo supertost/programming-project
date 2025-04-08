@@ -5,6 +5,13 @@ import processing.data.*;
 import java.util.*;
 import gifAnimation.*;
 import java.io.*;
+import processing.sound.*;
+
+
+
+//music
+SoundFile midiPlayer;
+
 
 // constant window dimensions
 PImage bg;
@@ -167,7 +174,11 @@ void setup() {
   mono = createFont("Fonts/Helvetica.ttf", 30);
   textFont(mono);
   mono2 = createFont("Fonts/Helvetica-Bold.ttf", 30);
-
+  
+  // Load music
+  midiPlayer = new SoundFile(this, "flightmusic.midi");
+  midiPlayer.play();
+  
   // Loading screen image
   //img = loadImage("images.jpg");
   myAnimation = new Gif(this, "giphy.gif");
