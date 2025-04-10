@@ -1,5 +1,4 @@
 
-// Global Variables
 import processing.core.*;
 import processing.data.*;
 import java.util.*;
@@ -26,11 +25,12 @@ PImage airport3;
 PImage pc;
 //PImage customer;
 
+// Global Variables
 final int SCREEN_WIDTH = 1200;
 final int SCREEN_HEIGHT = 800;
 final int HEADER_HEIGHT = 150;
 
-// Global screen indicator: 0 = main UI, 1 = chart screen.
+// Screen indicator (Ex: 0 = main UI, 1 = chart screen):
 int currentScreen = 0;
 
 // RGB Colour Variable For The ORIGIN button
@@ -55,7 +55,7 @@ int dateButtonX = originX + buttonW + 20, dateButtonY = destY, dateButtonW = 250
 int toggleX = dateButtonX + dateButtonW + 20, toggleY = destY + 9;
 int searchX = toggleX + 150, searchY = destY, searchW = 200, searchH = 40;
 
-// New Search Button position
+// Search Button position
 int searchButtonX = searchX + searchW + 20;
 int searchButtonY = searchY;
 int searchButtonW = 100;
@@ -78,18 +78,18 @@ boolean selectingStart = true;    // if true, next date sets start; else sets en
 boolean searchActive = false;
 String searchText = "Search US State";
 
-// Creating the custom fonts
+// Creating the custom fonts, one for the title, the other for regular text
 PFont mono;
 PFont mono2;
 
 // All flight objects stored here.
 ArrayList<Flight> flights;
 
-// NEW: Global variable to store filtered flights for 3D Map view.
+// Arraylist to store filtered flights for the US map.
 ArrayList<Flight> filteredFlightsForMap;
 
 
-// Global Variables for States Popup
+// Variables for States Popup
 boolean showStatesPopup = false;
 ArrayList<String> statesToShow = new ArrayList<String>();
 String selectedState = ""; // holds the state abbreviation selected by the user
@@ -101,7 +101,7 @@ int popupW = 300;  // width of states popup
 int popupH = 600;  // height of states popup
 
 
-// Global Variables for Airports Popup
+// Variables for Airports Popup
 boolean showAirportsPopup = false;
 ArrayList<String> airportsToShow = new ArrayList<String>();
 String selectedAirport = ""; // holds the chosen airport
@@ -112,17 +112,18 @@ int airportPopupY = popupY;
 int airportPopupW = 300;
 int airportPopupH = 400;
 
-// Global Variables for Bar Chart
+// Calling the barchart class
 BarChart barChart;
 
 
-// Global Variable for Pie Chart Data (for the pie chart view)
+// Arraylist for Pie Chart Data
 ArrayList<Flight> pieChartFlights;
 
+// Arraylist for fun facts
 ArrayList<String> funFacts;
 
 
-// Global Variables for Header Menu (Chart Views)
+// Variables for Header Menu (Chart Views)
 String chartType = "Bar Chart"; // default view after search
 
 // Header Menu Button positions and dimensions
@@ -135,16 +136,15 @@ int headerMenuButtonGap = 45;
 LineGraph lineGraph;
 
 
-// Global Variables for Map Integration
+// Variables for Map Integration
 PShape usMap;                // The complete SVG map
 ArrayList<PShape> mapStates; // List of individual state shapes
 
-// New offset variables to move the map and popup down
-// >>> Modified: Increase offset to move map further down.
+// Offset variables to move the map and popup down
 int mapYOffset = 150;
 int statePopupYOffset = 80;
 
-// NEW: Global variable to store total filtered flights across all states.
+// Variable to store total filtered flights across all states.
 int totalFilteredFlights = 0;
 
 // LoadingScreen initiation
@@ -169,6 +169,7 @@ ArrayList<String> facts;
 boolean loadingComplete = false; // Track if loading is done
 
 void setup() {
+  
   size(1200, 800);
   pixelDensity(1);
   textSize(16);
@@ -178,14 +179,14 @@ void setup() {
   // Load fonts
   mono = createFont("Fonts/Helvetica.ttf", 30);
   textFont(mono);
+  
   mono2 = createFont("Fonts/Helvetica-Bold.ttf", 30);
   
   // Load music
   midiPlayer = new SoundFile(this, "flightmusic.midi");
   midiPlayer.play();
   
-  // Loading screen image
-  //img = loadImage("images.jpg");
+  // Loading the loading screen image
   myAnimation = new Gif(this, "giphy.gif");
   myAnimation.play();
   loadingScreen = new LoadingScreen(true);
@@ -193,8 +194,8 @@ void setup() {
   // Start loading data sumiltaneously
   thread("loadData");
 
-
-  menuX = width; // Start off-screen
+  // For the sidebar menu
+  menuX = width; // Makes it start off-screen
   targetX = width;
   iconX = width - iconSize - 20;
   iconY = 20 + 20;
@@ -205,7 +206,9 @@ void setup() {
   String[] lines = loadStrings("US_Main_Airports_Fun_Facts.csv");
   
   if (lines != null) {
+    
     for (String line : lines) {
+      
       funFacts.add(line);
     }
   }
@@ -217,25 +220,28 @@ void setup() {
 }
 
 void loadData() {
+  
   // Loads the background images
   bg = loadImage("background.png");
   bg2 = loadImage("background-test.png");
   bg3 = loadImage("background4-differentMenu.png");
+  
+  // Loading standart images
   contact = loadImage("emailPhone.png");
-  //customer = loadImage("customerService.jpg");
   about = loadImage("processinglogo.png");
   screenshots = loadImage("screenshots.png");
-  
   airport1 = loadImage("LGApng.png");
   airport2 = loadImage("jfk.png");
-  
   pc = loadImage("pc.png");
+
 
   flights = new ArrayList<Flight>();
 
   // Load data from CSV
   Table table = loadTable("flights_full.csv", "header");
+  
   for (TableRow row : table.rows()) {
+    
     Flight flight = new Flight(
       row.getString("FL_DATE"), row.getString("MKT_CARRIER"), row.getInt("MKT_CARRIER_FL_NUM"),
       row.getString("ORIGIN"), row.getString("ORIGIN_CITY_NAME"), row.getString("ORIGIN_STATE_ABR"),
@@ -244,44 +250,62 @@ void loadData() {
       row.getInt("DEP_TIME"), row.getInt("CRS_ARR_TIME"), row.getInt("ARR_TIME"),
       row.getInt("CANCELLED") == 1, row.getInt("DIVERTED") == 1, row.getInt("DISTANCE")
       );
+      
     flights.add(flight);
   }
 
-  // Initialize the map for the 3D Map view.
+  // Initialize the map for the US Map view.
   setupMap();
 
   // Mark loading as complete
   loadingComplete = true;
 }
 
+
 void draw() {
+  
   if (!loadingComplete) {
+    
     background(0);
     loadingScreen.draw();
-  } else {
+  } 
+  else {
+    
     background(255);
+
     if (currentScreen == 0) {
+
       // Main UI screen.
       dateButtonY = destY;
 
       searchButtonY = searchY;
       backButtonY = searchY + height + 1000;
+
       if (bg != null) {
+
         image(bg, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-      } else {
+      } 
+      else {
+
         background(100);
       }
+
       drawHeader();
+
       if (showStatesPopup) {
+
         drawStatesPopup();
       }
       if (showAirportsPopup) {
+
         drawAirportsPopup();
       }
       if (dateRangeActive) {
+
         drawCalendar(SCREEN_WIDTH/2 - 110, SCREEN_HEIGHT/2 - 120);
       }
       if (showErrorSearch == true) {
+
         showErrorSearch();
       }
 
@@ -289,72 +313,103 @@ void draw() {
       updateMenu();
       drawMenu();
     }
+
     if (currentScreen == 1) {
+
       dateButtonY = destY + height;
 
       if (bg2 != null) {
+
         image(bg2, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-      } else {
+      } 
+      else {
+
         background(240);
       }
+
       backButtonY = searchY;
       searchButtonY = searchY + height + 1000;
 
       // Draw chart view based on header menu selection.
       if (chartType.equals("Bar Chart")) {
+
         if (barChart != null) {
+
           barChart.display();
+          
           fill(0);
           textFont(mono2);
           textSize(32);
           textAlign(CENTER, TOP);
           String title = "";
+
           if (selectionDorO.equals("Destination")) {
+
             title = isLate ? "Late Flights to " : "On Time Flights to ";
-          } else if (selectionDorO.equals("Origin")) {
+          } 
+          else if (selectionDorO.equals("Origin")) {
+
             title = isLate ? "Late Flights from " : "On Time Flights from ";
           }
+
           title += selectedState + ", " + selectedAirport + ": (" + startDate + "/1/2022 - " + endDate + "/1/2022)" ;
           text(title, SCREEN_WIDTH/2, 106);
         }
-      } else if (chartType.equals("Line Graph")) {
+      } 
+      else if (chartType.equals("Line Graph")) {
 
         drawLineGraph();
         lineGraph.display();
-
 
         fill(0);
         textFont(mono2);
         textSize(32);
         textAlign(CENTER, TOP);
         String title = "";
+
         if (selectionDorO.equals("Destination")) {
+
           title = isLate ? "Late Flights per airport in " : "On Time Flights per airport in ";
-        } else if (selectionDorO.equals("Origin")) {
+        } 
+        else if (selectionDorO.equals("Origin")) {
+          
           title = isLate ? "Late Flights from " : "On Time Flights from ";
         }
-        title += selectedState + ": (" + startDate + "/1/2022 - " + endDate + "/1/2022)" ;
+        title += selectedState + ": (" + startDate + "/1/2022 - " + endDate + "/1/2022)";
         text(title, SCREEN_WIDTH/2, 106);
-      } else if (chartType.equals("Pie Chart")) {
-        // Original Pie Chart functionality remains unchanged.
+      } 
+      else if (chartType.equals("Pie Chart")) {
+        
+        // Original Pie Chart functionality
         int cancelledCount = 0;
         int lateCount = 0;
         int normalCount = 0;
 
         for (Flight flight : pieChartFlights) {
+
           if (flight.cancelled) {
+
             cancelledCount++;
-          } else {
+          } 
+          else {
+
             boolean lateFlight = false;
+
             if (selectionDorO.equals("Origin")) {
+
               lateFlight = checkIsLate(String.valueOf(flight.expDepTime), String.valueOf(flight.depTime));
-            } else {
+            } 
+            else {
+
               lateFlight = checkIsLate(String.valueOf(flight.expArrTime), String.valueOf(flight.arrTime));
             }
 
             if (lateFlight) {
+
               lateCount++;
-            } else {
+            } 
+            else {
+
               normalCount++;
             }
           }
@@ -364,9 +419,13 @@ void draw() {
         int nonDivertedCount = 0;
 
         for (Flight flight : pieChartFlights) {
+
           if (flight.diverted) {
+
             divertedCount++;
-          } else {
+          } 
+          else {
+
             nonDivertedCount++;
           }
         }
@@ -421,10 +480,10 @@ void draw() {
         rect(legendX, legendY + legendSpacing, 15, 15);
         fill(0);
         text("Not Diverted (" + nonDivertedCount + ")", legendX + 20, legendY + legendSpacing + 7);
-      } else if (chartType.equals("US Map")) {
-        // ------------------------
-        // NEW: Draws the 3D map with complete flight data.
-        // ------------------------
+      } 
+      else if (chartType.equals("US Map")) {
+
+        // Draw the US map
         draw3DMap();
       }
 
@@ -468,21 +527,24 @@ void draw() {
   }
 }
 
-// ------------------------
-// UI Drawing Functions (Header, Buttons, Calendar, etc.)
-// ------------------------
 
+
+// Method to draw the header, and contents inside it
 void drawHeader() {
+
   noStroke();
   fill(100, 100, 255, 0);
   rect(0, 0, SCREEN_WIDTH, HEADER_HEIGHT + 20);
   fill(255);
+
   textAlign(LEFT, CENTER);
   textFont(mono2);
   textSize(45);
   text("CloudCruiser", 20, HEADER_HEIGHT/2 - 20);
+
   textFont(mono);
   textSize(16);
+
   drawButtonD(destX, destY, buttonW, buttonH, "Destination");
   drawButtonO(originX, originY, buttonW, buttonH, "Origin");
   drawDateButton(dateButtonX, dateButtonY, dateButtonW, dateButtonH);
@@ -492,16 +554,23 @@ void drawHeader() {
 }
 
 boolean isMouseOver(int x, int y, int w, int h) {
+
   return (mouseX >= x && mouseX <= x + w && mouseY >= y && mouseY <= y + h);
 }
 
 void drawButtonD(int x, int y, int w, int h, String label) {
+
   noStroke();
+
   if (isMouseOver(x, y, w, h) && !selectionDorO.equals("Destination")) {
+
     fill(255, 255, 255, 255);
-  } else {
+  } 
+  else {
+
     fill(colourValueButtonDestR, colourValueButtonDestG, colourValueButtonDestB, 220);
   }
+
   rect(x, y, w, h, 10);
   fill(0);
   textAlign(CENTER, CENTER);
@@ -509,12 +578,18 @@ void drawButtonD(int x, int y, int w, int h, String label) {
 }
 
 void drawButtonO(int x, int y, int w, int h, String label) {
+
   noStroke();
+
   if (isMouseOver(x, y, w, h) && !selectionDorO.equals("Origin")) {
+
     fill(255, 255, 255, 255);
-  } else {
+  } 
+  else {
+    
     fill(colourValueButtonOriginR, colourValueButtonOriginG, colourValueButtonOriginB, 220);
   }
+
   rect(x, y, w, h, 10);
   fill(0);
   textAlign(CENTER, CENTER);
@@ -522,38 +597,60 @@ void drawButtonO(int x, int y, int w, int h, String label) {
 }
 
 void drawDateButton(int x, int y, int w, int h) {
+
   noStroke();
+
   if (isMouseOver(x, y, w, h)) {
+
     fill(255, 255, 255, 255);
-  } else {
+  } 
+  else {
+
     fill(255, 255, 255, 220);
   }
+
   rect(x, y, w, h, 10);
   fill(0);
   textAlign(CENTER, CENTER);
+
   if (startDate == -1) {
+
     text("Pick Date Range", x + w/2, y + h/2);
-  } else if (startDate != -1 && endDate == -1) {
+  } 
+  else if (startDate != -1 && endDate == -1) {
+
     text("Start: " + startDate + " (select End Date)", x + w/2, y + h/2);
-  } else {
+  } 
+  else {
+
     if (startDate <= endDate) {
+
       text("Start: " + startDate + "   End: " + endDate, x + w/2, y + h/2);
-    } else {
+    } 
+    else {
+
       text("Start: " + endDate + "   End: " + startDate, x + w/2, y + h/2);
     }
   }
 }
 
 void drawToggle(int x, int y, String label, boolean active) {
+
   fill(255);
   textAlign(LEFT, CENTER);
   text(label, x + 15, y + 11);
+
   noStroke();
+
   if (isMouseOver(x+60, y, 40, 25)) {
+
     fill(active ? color(0, 220, 0) : color(220));
-  } else {
+  } 
+  else {
+
     fill(active ? color(0, 200, 0) : color(200));
   }
+
   rect(x + 60, y, 40, 25, 12);
   fill(255);
   float knobX = active ? x + 60 + 20 : x + 60;
@@ -561,12 +658,18 @@ void drawToggle(int x, int y, String label, boolean active) {
 }
 
 void drawSearchBar(int x, int y, int w, int h, String textContent) {
+
   noStroke();
+
   if (isMouseOver(x, y, w, h)) {
+
     fill(255, 255, 255, 255);
-  } else {
+  } 
+  else {
+
     fill(255, 255, 255, 220);
   }
+
   rect(x, y, w, h, 10);
   fill(0);
   textAlign(LEFT, CENTER);
@@ -574,12 +677,18 @@ void drawSearchBar(int x, int y, int w, int h, String textContent) {
 }
 
 void drawSearchButton(int x, int y, int w, int h, String label) {
+
   noStroke();
+
   if (isMouseOver(x, y, w, h)) {
+
     fill(255, 255, 255, 255);
-  } else {
+  } 
+  else {
+
     fill(255, 255, 255, 220);
   }
+
   rect(x, y, w, h, 10);
   fill(0);
   textAlign(CENTER, CENTER);
@@ -587,12 +696,18 @@ void drawSearchButton(int x, int y, int w, int h, String label) {
 }
 
 void drawBackButton(int x, int y, int w, int h) {
+
   noStroke();
+
   if (isMouseOver(x, y, w, h)) {
+
     fill(255, 255, 255, 255);
-  } else {
+  } 
+  else {
+
     fill(255, 255, 255, 220);
   }
+
   rect(x, y, w, h, 10);
   fill(0);
   textAlign(CENTER, CENTER);
@@ -600,45 +715,68 @@ void drawBackButton(int x, int y, int w, int h) {
 }
 
 void drawCalendar(int x, int y) {
+
   noStroke();
   fill(240, 170);
   rect(x-115, y-120, 220, 240, 10);
   fill(0);
   textAlign(CENTER, CENTER);
   text("January 2022", x + 110 - 115, y + 25 - 120);
+
   int gridStartX = x + 20 - 115;
   int gridStartY = y + 60 - 120;
   int colWidth = 30;
   int rowHeight = 30;
   int day = 1;
+
   for (int row = 0; row < 5; row++) {
+
     for (int col = 0; col < 7; col++) {
+
       if (day > 31) {
+
         break;
       }
+
       int cellX = gridStartX + col * colWidth;
       int cellY = gridStartY + row * rowHeight;
+
       if (day == startDate) {
+
         fill(0, 150, 255);
-      } else if (day == endDate) {
+      } 
+      else if (day == endDate) {
+
         fill(0, 100, 255);
-      } else if (startDate != -1 && endDate != -1 && day > startDate && day < endDate) {
+      } 
+      else if (startDate != -1 && endDate != -1 && day > startDate && day < endDate) {
+
         fill(200, 200, 255);
-      } else if (startDate != -1 && endDate != -1 && day < startDate && day > endDate) {
+      } 
+      else if (startDate != -1 && endDate != -1 && day < startDate && day > endDate) {
+
         fill(200, 200, 255);
-      } else {
+      } 
+      else {
+
         fill(255);
       }
+
       if (isMouseOver(cellX - 10, cellY - 10, 25, 25)) {
+
         stroke(255, 0, 0);
         strokeWeight(2);
-      } else {
+      } 
+      else {
+
         noStroke();
       }
+
       rect(cellX - 10, cellY - 10, 25, 25, 5);
       fill((day == startDate || day == endDate) ? 255 : 0);
       textAlign(CENTER, CENTER);
       text(day, cellX, cellY);
+
       day++;
       strokeWeight(1);
     }
@@ -646,7 +784,9 @@ void drawCalendar(int x, int y) {
 }
 
 void drawStatesPopup() {
+
   noStroke();
+
   fill(255, 240);
   rect(popupX, popupY, popupW, popupH, 10);
   fill(175, 200);
@@ -656,30 +796,38 @@ void drawStatesPopup() {
   textAlign(CENTER, CENTER);
   text("X", popupX + popupW - 15, popupY + 15);
   fill(0);
-  // >>> Modified: Increase popup title size and vertical spacing.
   textSize(22);
   textAlign(CENTER, TOP);
   text("States (" + selectionDorO + ")", popupX + popupW/2, popupY + 40);
+
   int cols = 3;
   int gapX = (popupW - 20) / cols;
   int gapY = 30;
   int startX = popupX + 10;
   int startY = popupY + 80;
+
   textSize(16);
   textAlign(LEFT, CENTER);
+
   for (int i = 0; i < statesToShow.size(); i++) {
+
     int col = i % cols;
     int row = i / cols;
     int x = startX + col * gapX;
     int y = startY + row * gapY;
+    
     fill(0);
     text(statesToShow.get(i), x, y);
+
     if (statesToShow.get(i).equals(selectedState)) {
+
       noFill();
       stroke(0, 0, 255);
       strokeWeight(2);
+
       float tw = textWidth(statesToShow.get(i));
       float th = textAscent() + textDescent();
+
       rect(x - 2, y - th/2 - 2, tw + 4, th + 4);
       noStroke();
     }
@@ -687,6 +835,7 @@ void drawStatesPopup() {
 }
 
 void drawAirportsPopup() {
+
   noStroke();
   fill(255, 240);
   rect(airportPopupX, airportPopupY, airportPopupW, airportPopupH + 50, 10);
@@ -700,25 +849,34 @@ void drawAirportsPopup() {
   textSize(18);
   textAlign(CENTER, TOP);
   text("Airports (" + selectedState + ")", airportPopupX + airportPopupW/2, airportPopupY + 30);
+
   int cols = 2;
   int gapX = (airportPopupW - 20) / cols;
   int gapY = 30;
   int startX = airportPopupX + 10;
   int startY = airportPopupY + 60;
+
   textSize(16);
   textAlign(LEFT, CENTER);
+
   for (int i = 0; i < airportsToShow.size(); i++) {
+
     int col = i % cols;
     int row = i / cols;
     int x = startX + col * gapX;
     int y = startY + row * gapY;
+
     fill(0);
     text(airportsToShow.get(i), x, y);
+
     if (airportsToShow.get(i).equals(selectedAirport)) {
+
       noFill();
       stroke(0, 0, 255);
+
       float tw = textWidth(airportsToShow.get(i));
       float th = textAscent() + textDescent();
+
       rect(x - 2, y - th/2 - 2, tw + 4, th + 4);
       noStroke();
     }
@@ -726,29 +884,39 @@ void drawAirportsPopup() {
 }
 
 void drawHeaderMenu() {
+
   noStroke();
   fill(255, 0);
   rect(0, 0, SCREEN_WIDTH, headerMenuButtonH + 20);
   int x = headerMenuXStart;
   textFont(mono2);
   textSize(16);
+
   drawChartMenuButton(x, headerMenuY, headerMenuButtonW, headerMenuButtonH, "Line Graph", chartType.equals("Line Graph"));
   x += headerMenuButtonW + headerMenuButtonGap;
+
   drawChartMenuButton(x, headerMenuY, headerMenuButtonW, headerMenuButtonH, "Bar Chart", chartType.equals("Bar Chart"));
   x += headerMenuButtonW + headerMenuButtonGap;
+
   drawChartMenuButton(x, headerMenuY, headerMenuButtonW, headerMenuButtonH, "Pie Chart", chartType.equals("Pie Chart"));
   x += headerMenuButtonW + headerMenuButtonGap;
-  // >>> Modified: For 3D Map, reset filteredFlightsForMap to flights.
+
   drawChartMenuButton(x, headerMenuY, headerMenuButtonW, headerMenuButtonH, "US Map", chartType.equals("US Map"));
 }
 
 void drawChartMenuButton(int x, int y, int w, int h, String label, boolean active) {
+
   noStroke();
+
   if (active) {
+
     fill(200, 200, 255);
-  } else {
+  } 
+  else {
+
     fill(255, 255, 255, 220);
   }
+
   rect(x, y, w, h, 10);
   fill(0);
   textAlign(CENTER, CENTER);
@@ -756,9 +924,13 @@ void drawChartMenuButton(int x, int y, int w, int h, String label, boolean activ
 }
 
 void drawLineGraph() {
+
   if (lineGraph != null) {
+
     lineGraph.display();
-  } else {
+  } 
+  else {
+
     fill(0);
     textFont(mono2);
     textSize(40);
@@ -770,25 +942,34 @@ void drawLineGraph() {
 
 // Mouse Click Handling
 void mousePressed() {
+
   if (currentScreen == 1) {
+
     int x = headerMenuXStart;
+
     if (isMouseOver(x, headerMenuY, headerMenuButtonW, headerMenuButtonH)) {
+
       chartType = "Line Graph";
       return;
     }
     x += headerMenuButtonW + headerMenuButtonGap;
+    
     if (isMouseOver(x, headerMenuY, headerMenuButtonW, headerMenuButtonH)) {
+
       chartType = "Bar Chart";
       return;
     }
     x += headerMenuButtonW + headerMenuButtonGap;
+
     if (isMouseOver(x, headerMenuY, headerMenuButtonW, headerMenuButtonH)) {
+
       chartType = "Pie Chart";
       return;
     }
     x += headerMenuButtonW + headerMenuButtonGap;
-    // >>> Modified: For 3D Map, reset filteredFlightsForMap to the complete flights dataset.
+
     if (isMouseOver(x, headerMenuY, headerMenuButtonW, headerMenuButtonH)) {
+
       chartType = "US Map";
       filteredFlightsForMap = flights;
       return;
@@ -796,24 +977,32 @@ void mousePressed() {
   }
 
   if (showStatesPopup) {
+
     int closeBtnX = popupX + popupW - 25;
     int closeBtnY = popupY + 5;
+
     if (isMouseOver(closeBtnX, closeBtnY, 20, 20)) {
+
       showStatesPopup = false;
       showAirportsPopup = false;
       return;
     }
+
     int cols = 3;
     int gapX = (popupW - 20) / cols;
     int gapY = 30;
     int startX = popupX + 10;
     int startY = popupY + 60;
+
     for (int i = 0; i < statesToShow.size(); i++) {
+
       int col = i % cols;
       int row = i / cols;
       int cellX = startX + col * gapX;
       int cellY = startY + row * gapY;
+
       if (mouseX >= cellX && mouseX <= cellX + gapX && mouseY >= cellY - gapY/2 && mouseY <= cellY + gapY/2) {
+
         selectedState = statesToShow.get(i);
         searchText = selectedState;
         populateAirportsForState();
@@ -824,23 +1013,31 @@ void mousePressed() {
   }
 
   if (showAirportsPopup) {
+
     int closeBtnX = airportPopupX + airportPopupW - 25;
     int closeBtnY = airportPopupY + 5;
+
     if (isMouseOver(closeBtnX, closeBtnY, 20, 20)) {
+
       showAirportsPopup = false;
       return;
     }
+
     int cols = 2;
     int gapX = (airportPopupW - 20) / cols;
     int gapY = 30;
     int startX = airportPopupX + 10;
     int startY = airportPopupY + 60;
+
     for (int i = 0; i < airportsToShow.size(); i++) {
+
       int col = i % cols;
       int row = i / cols;
       int cellX = startX + col * gapX;
       int cellY = startY + row * gapY;
+
       if (mouseX >= cellX && mouseX <= cellX + gapX && mouseY >= cellY - gapY/2 && mouseY <= cellY + gapY/2) {
+
         selectedAirport = airportsToShow.get(i);
         searchText = selectedState + " - " + selectedAirport;
         return;
@@ -851,8 +1048,11 @@ void mousePressed() {
   boolean clickHandled = false;
 
   if (isMouseOver(dateButtonX, dateButtonY, dateButtonW, dateButtonH)) {
+
     showErrorSearch = false;
+
     if (!dateRangeActive) {
+
       dateRangeActive = true;
       selectingStart = true;
       startDate = -1;
@@ -864,16 +1064,24 @@ void mousePressed() {
   }
 
   if (isMouseOver(destX, destY, buttonW, buttonH)) {
+
     println("Destination button clicked");
+
     selectionDorO = "Destination";
+
+    // Makes the destination color pink to signify it being clicked
     colourValueButtonDestR = 255;
     colourValueButtonDestG = 100;
     colourValueButtonDestB = 255;
+
+    // Makes the origin button white to signify it being deselected
     colourValueButtonOriginR = 255;
     colourValueButtonOriginG = 255;
     colourValueButtonOriginB = 255;
     opacityValueButtonOrigin = 220;
+
     populateStatesListForSelection();
+
     showStatesPopup = true;
     showAirportsPopup = false;
     clickHandled = true;
@@ -883,16 +1091,24 @@ void mousePressed() {
   }
 
   if (isMouseOver(originX, originY, buttonW, buttonH)) {
+
     println("Origin button clicked");
+
     selectionDorO = "Origin";
+
+    // Makes the origin color pink to signify it being clicked
     colourValueButtonOriginR = 255;
     colourValueButtonOriginG = 100;
     colourValueButtonOriginB = 255;
     opacityValueButtonOrigin = 220;
+
+    // Makes the destination button white to signify it being deselected
     colourValueButtonDestR = 255;
     colourValueButtonDestG = 255;
     colourValueButtonDestB = 255;
+
     populateStatesListForSelection();
+
     showStatesPopup = true;
     showAirportsPopup = false;
     clickHandled = true;
@@ -901,24 +1117,31 @@ void mousePressed() {
   }
 
   if (isMouseOver(toggleX + 60, toggleY, 20, 25)) {
+
     isLate = !isLate;
     clickHandled = true;
   }
   if (isMouseOver(toggleX + 80, toggleY, 20, 25)) {
+
     isLate = !isLate;
     clickHandled = true;
   }
 
   if (isMouseOver(searchButtonX, searchButtonY, searchButtonW, searchButtonH)) {
+
     showStatesPopup = false;
     showAirportsPopup = false;
     dateRangeActive = false;
     selectingStart = false;
     searchActive = false;
+
     if ((!selectionDorO.equals("")) && !selectedAirport.equals("") && !selectedState.equals("") && startDate != -1 && endDate != -1) {
+
       println("Search button clicked");
+
       ArrayList<Flight> filteredFlights = limitedFlights(startDate, endDate, flights, isLate);
-      // NEW: Store filtered flights for 3D Map use.
+
+      // Store filtered flights for 3D Map use.
       filteredFlightsForMap = filteredFlights;
 
       ArrayList<Flight> filteredFlightsNotDest = limitedFlights(startDate, endDate, flights, isLate);
@@ -926,13 +1149,19 @@ void mousePressed() {
       barChart = new BarChart(filteredFlights);
 
       ArrayList<Flight> flightsForLineGraph = new ArrayList<Flight>();
+
       for (Flight f : filteredFlights) {
+
         if (selectionDorO.equals("Destination") && f.destState.equals(selectedState)) {
+          
           flightsForLineGraph.add(f);
-        } else if (selectionDorO.equals("Origin") && f.originState.equals(selectedState)) {
+        } 
+        else if (selectionDorO.equals("Origin") && f.originState.equals(selectedState)) {
+
           flightsForLineGraph.add(f);
         }
       }
+
       lineGraph = new LineGraph(flightsForLineGraph, selectionDorO, selectedState, selectedAirport);
 
       ArrayList<Flight> flightsByDate = filterFlightsByDate(startDate, endDate, flights);
@@ -943,7 +1172,9 @@ void mousePressed() {
 
       currentScreen = 1;
       clickHandled = true;
-    } else {
+    } 
+    else {
+
       showErrorSearch = true;
       showErrorSearch();
       println("Please select an origin or a destination and a date");
@@ -951,89 +1182,120 @@ void mousePressed() {
   }
 
   if (isMouseOver(width/2 - 500, height/2 - 100, 1000, 200)) {
+
     showErrorSearch = false;
     println(showErrorSearch);
   }
 
   if (isMouseOver(backButtonX, backButtonY, backButtonW, backButtonH)) {
+
     currentScreen = 0;
     clickHandled = false;
   }
 
   if (dateRangeActive) {
+
     int calX = SCREEN_WIDTH/2 - 110 - 115, calY = SCREEN_HEIGHT/2 - 120 - 120;
+
     if (isMouseOver(calX, calY, 220, 240)) {
+
       showErrorSearch = false;
       int gridStartX = calX + 20;
       int gridStartY = calY + 60;
       int colWidth = 30, rowHeight = 30;
       int day = 1;
+
       for (int row = 0; row < 5; row++) {
+
         for (int col = 0; col < 7; col++) {
+
           if (day > 31) {
+
             break;
           }
           int cellX = gridStartX + col * colWidth;
           int cellY = gridStartY + row * rowHeight;
+
           if (isMouseOver(cellX - 10, cellY - 10, 25, 25)) {
+
             if (selectingStart) {
+
               startDate = day;
               selectingStart = false;
-            } else {
+            } 
+            else {
+
               endDate = day;
             }
+            
             break;
           }
+
           day++;
         }
       }
+
       clickHandled = true;
     }
   }
 
   if (!clickHandled) {
+
     dateRangeActive = false;
     searchActive = false;
   }
 
 
 
-  if (mouseX > iconX && mouseX < iconX + iconSize &&
-    mouseY > iconY && mouseY < iconY + iconSize) {
+  if (mouseX > iconX && mouseX < iconX + iconSize && mouseY > iconY && mouseY < iconY + iconSize) {
+
     toggleMenu();
-  } else if (menuOpen) {
+  } 
+  else if (menuOpen) {
+
     if (mouseX > menuX && mouseX < menuX + menuWidth) {
+
       if (mouseY > 100 && mouseY < 150) {
+
         currentScreen = 0;
-      } else if (mouseY > 150 && mouseY < 200) {
+      } 
+      else if (mouseY > 150 && mouseY < 200) {
+
         currentScreen = 4;
-      } else if (mouseY > 200 && mouseY < 250) {
+      } 
+      else if (mouseY > 200 && mouseY < 250) {
+
         currentScreen = 5;
-      } else if (mouseY > 250 && mouseY < 300) {
+      } 
+      else if (mouseY > 250 && mouseY < 300) {
+
         currentScreen = 6;
       }
+
       toggleMenu();
       return;
-    } else {
+    } 
+    else {
+
       toggleMenu();
     }
   }
 }
 
 void showErrorSearch() {
+
   fill(0, 100);
   rect(width/2 - 500, height/2 - 100, 1000, 200, 20);
   fill(255, 175);
   rect(width/2 - 500, height/2 - 100, 1000, 200, 20);
   textFont(mono2);
   fill(0);
+
   text("Please select an origin or a destination point and a date", width/2, height/2);
 }
 
-// ------------------------
-// Helper Functions
-// ------------------------
 
+// Helper functions
 String[] getRangeOfDates(int startDate, int endDate) {
   String[] array = new String[2];
   if (startDate <= endDate) {
@@ -1254,6 +1516,7 @@ ArrayList<String> getRandomFunFacts(ArrayList<String> allFacts) {
   
   return selected;
 }
+
 
 void drawFunFacts() {
   new FunFacts().display();
