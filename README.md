@@ -1,27 +1,69 @@
-# Programming Project - Week 6 and Beyond
 
-## This is the Programming Project GitHub repository for Group 5.
+# CloudCruiser
 
-### Group Work Allocation:
-| FrontEnd | BackEnd    |  Charts    |
-|  :---:   |   :----:   |   :---:   |
-| Emir     | Aziz       | Ioannis   |
-| Parsia   | Dev        | Andreas   |
+**CloudCruiser** is an interactive desktop application developed in **Java Processing**. It visually presents **U.S. domestic flight data** from **January 1st to January 31st, 2022**, making flight trends and delays easy to understand through a variety of charts and maps.
 
+---
 
-Files related to the project are located under the "Programming-Project-2025" folder, other related csv files are located under the "Project Resources" folder, 
+## About the Application
 
-The "space_invaders" folder is there for you to test how GitHub works. 
+CloudCruiser transforms raw flight data into a visual format using:
+- **Bar Charts**
+- **Line Charts**
+- **Pie Charts**
+- **Interactive US Map**
 
-### ! There is a Github Desktop application that allows you to clone everything in the repository to your PC and upload directly to the repository, please download it.
+CloudCruiser has **four dynamic filters** to explore the flight data:
+- **Origin** – Choose the departure airport.
+- **Destination** – Select the arrival airport.
+- **Date** – Select a time frame for the data.
+- **Late Toggle** – Show delayed flights only.
 
-## Github Desktop program instructions on how to use with this repository
+---
 
-After installing the Github desktop app, you will be prompted to login to your account. After you login, you will be able to pick this repository to clone on your computer.
+## Required Libraries
 
-After you clone the repository to your preferred location in your computer, you will be able to open it in VS Code automatically, but if you do not want to open it from VS Code, you can just manually open the files from file explorer and edit in Processing IDE.
+To run CloudCruiser, make sure you have the following **Processing libraries** installed:
 
-When you make changes to the code on your computer, the GitHub desktop app will show you the changes you make, when you're done with what you're doing, you can open the Github desktop app, press "Commit to main" in the lower left hand side of the window and then press "Push commits to the origin". Pressing this button will replace the file in the repository with the one you have edited.
+> You can install these libraries via the Processing IDE Library Manager.
 
-There will also be a short photo tutorial under the "Github Desktop Tutorial" folder.
+- [`peasycam`](http://mrfeinberg.com/peasycam/)
+- [`sound`](https://processing.org/reference/libraries/sound/index.html)
+- [`gifAnimation`](https://extrapixel.github.io/gif-animation/)
 
+---
+
+## Team Members and Work Allocation
+
+| FrontEnd     | BackEnd      | Charts       |
+|--------------|--------------|--------------|
+| Emir         | Aziz         | Ioannis      |
+| Parsia       | Dev          | Andreas      |
+
+---
+
+## Project Structure
+
+- **Flight_Program/**  
+  Contains all **source code files**, Processing sketches, and visual assets used in the application.
+
+- **data/**  
+  Contains **CSV data files** used for chart generation and flight data analysis.
+
+Make sure both folders are properly located when running the project in Processing.
+
+---
+
+## Getting Started
+
+1. Open the **main `.pde` file** in Processing from the `Flight_Program` folder.
+2. Ensure all three libraries (`peasycam`, `sound`, `gifAnimation`) are installed.
+3. Run the program.
+
+---
+
+## Data Scope
+
+The data analyzed covers:
+- Various U.S. domestic flights from **January 1st to January 31st, 2022**
+- With data including delays, origins, destinations, and more
