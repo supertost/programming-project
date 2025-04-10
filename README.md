@@ -47,7 +47,7 @@ To run CloudCruiser, make sure you have the following **Processing libraries** i
 - **Flight_Program/**  
   Contains all **source code files**, Processing sketches, and visual assets used in the application.
 
-- **data/**  
+- **Flight_Program/data/**  
   Contains **CSV data files** used for chart generation and flight data analysis.
 
 Make sure both folders are properly located when running the project in Processing.
